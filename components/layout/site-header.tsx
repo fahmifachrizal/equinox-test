@@ -1,15 +1,10 @@
 "use client"
 
-import { Globe, User } from "lucide-react"
+import { Globe } from "lucide-react"
 import { SidebarTrigger } from "@/components/ui/sidebar"
-import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Separator } from "@/components/ui/separator"
+import { LanguageSwitcher } from "@/components/language-switcher"
+import { AuthPopover } from "@/components/auth-popover"
 
 export function SiteHeader() {
   return (
@@ -26,28 +21,8 @@ export function SiteHeader() {
         <SidebarTrigger className="-ml-1" />
       </div>
       <div className="ml-auto flex items-center gap-2">
-         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm">
-                <span className="mr-2">🇺🇸</span>
-                 English
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>
-                <span className="mr-2">🇺🇸</span>
-                English
-            </DropdownMenuItem>
-             <DropdownMenuItem>
-                <span className="mr-2">🇮🇩</span>
-                Indonesia
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <Button variant="secondary" size="sm" className="gap-2">
-          <User className="size-4" />
-          Login
-        </Button>
+        <LanguageSwitcher />
+        <AuthPopover />
       </div>
     </header>
   )
