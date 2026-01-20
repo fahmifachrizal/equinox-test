@@ -5,6 +5,8 @@ import { User, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
+import { OAuthButtons } from "@/components/oauth-buttons"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -21,32 +23,8 @@ export function AuthPopover() {
   const [isLoading, setIsLoading] = React.useState(false)
   const router = useRouter()
 
-  // Auto-fill animation
-  React.useEffect(() => {
-    if (isOpen) {
-      let userIndex = 0
-      let passIndex = 0
-      const targetUser = "user"
-      const targetPass = "password"
-      
-      setUsername("")
-      setPassword("")
 
-      const typeInterval = setInterval(() => {
-        if (userIndex < targetUser.length) {
-          setUsername((prev) => prev + targetUser.charAt(userIndex))
-          userIndex++
-        } else if (passIndex < targetPass.length) {
-          setPassword((prev) => prev + targetPass.charAt(passIndex))
-          passIndex++
-        } else {
-          clearInterval(typeInterval)
-        }
-      }, 100)
 
-      return () => clearInterval(typeInterval)
-    }
-  }, [isOpen])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -80,7 +58,7 @@ export function AuthPopover() {
           Login
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
+      <PopoverContent className="w-88 p-6" align="end">
         <form onSubmit={handleLogin} className="grid gap-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Quick Login</h4>
@@ -92,7 +70,7 @@ export function AuthPopover() {
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="username">Username</Label>
               <Input
-                id="username"
+                id="usernameMock"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className="col-span-2 h-8"
@@ -102,7 +80,7 @@ export function AuthPopover() {
             <div className="grid grid-cols-3 items-center gap-4">
               <Label htmlFor="password">Password</Label>
               <Input
-                id="password"
+                id="passwordMock"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -116,7 +94,18 @@ export function AuthPopover() {
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Login
             </Button>
-            <div className="text-center text-xs">
+             <div className="relative my-2">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <OAuthButtons isLoading={isLoading} />
+            <div className="text-center text-xs mt-2">
                 Didn&apos;t have account?{" "}
                 <Link href="/register" className="underline text-primary">
                     register here

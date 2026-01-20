@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { OAuthButtons } from "@/components/oauth-buttons"
 
 import { AuthLayout } from "@/components/auth-layout"
 
@@ -43,27 +44,7 @@ export default function LoginPage() {
     }
   }
 
-  const simulateTyping = async () => {
-    const demoUsername = "demo@equinox.com"
-    const demoPassword = "password123"
-    
-    setIsLoading(true)
-    setUsername("")
-    setPassword("")
 
-    // Type username
-    for (let i = 0; i < demoUsername.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 50))
-        setUsername(prev => prev + demoUsername[i])
-    }
-
-    // Type password
-    for (let i = 0; i < demoPassword.length; i++) {
-        await new Promise(resolve => setTimeout(resolve, 50))
-        setPassword(prev => prev + demoPassword[i])
-    }
-    setIsLoading(false)
-  }
 
   return (
     <AuthLayout>
@@ -79,11 +60,11 @@ export default function LoginPage() {
         <form onSubmit={handleLogin}>
             <div className="grid gap-2">
               <div className="grid gap-1">
-                <Label className="sr-only" htmlFor="username">
+                <Label className="sr-only" htmlFor="usernameMock">
                   Username
                 </Label>
                 <Input
-                  id="username"
+                  id="usernameMock"
                   placeholder="name@example.com"
                   type="text"
                   autoCapitalize="none"
@@ -95,11 +76,11 @@ export default function LoginPage() {
                 />
               </div>
               <div className="grid gap-1">
-                 <Label className="sr-only" htmlFor="password">
+                 <Label className="sr-only" htmlFor="passwordMock">
                   Password
                 </Label>
                 <Input
-                  id="password"
+                  id="passwordMock"
                   placeholder="Password"
                   type="password"
                   autoCapitalize="none"
@@ -110,22 +91,8 @@ export default function LoginPage() {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <Alert className="bg-muted text-muted-foreground border-none flex justify-between items-center">
-                 <AlertDescription>This is mock login/register for demonstration purpose only</AlertDescription>
-                 <Button 
-                    variant="link" 
-                    size="sm" 
-                    className="h-auto p-0 text-xs text-primary underline-offset-4 hover:underline ml-2 whitespace-nowrap"
-                    onClick={(e) => {
-                        e.preventDefault()
-                        simulateTyping()
-                    }}
-                    disabled={isLoading}
-                 >
-                    Auto-fill
-                 </Button>
-              </Alert>
-              <Button disabled={isLoading} className="mt-2 w-fit">
+
+              <Button disabled={isLoading} className="mt-2 w-full">
                 {isLoading && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}
@@ -143,14 +110,7 @@ export default function LoginPage() {
             </span>
           </div>
         </div>
-        <Button variant="outline" type="button" disabled={isLoading} className="w-fit">
-          {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          ) : (
-            <div className="mr-2 h-4 w-4" /> 
-          )}{" "}
-          GitHub
-        </Button>
+        <OAuthButtons isLoading={isLoading} />
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
         <Link

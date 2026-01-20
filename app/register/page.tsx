@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
+import { OAuthButtons } from "@/components/oauth-buttons"
 
 import { AuthLayout } from "@/components/auth-layout"
 
@@ -24,36 +25,42 @@ export default function Register() {
         <div className="grid gap-4">
             <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                <Label htmlFor="first-name">First name</Label>
-                <Input id="first-name" placeholder="Max" required />
+                <Label htmlFor="first-nameMock">First name</Label>
+                <Input id="first-nameMock" placeholder="Max" required />
                 </div>
                 <div className="grid gap-2">
-                <Label htmlFor="last-name">Last name</Label>
-                <Input id="last-name" placeholder="Robinson" required />
+                <Label htmlFor="last-nameMock">Last name</Label>
+                <Input id="last-nameMock" placeholder="Robinson" required />
                 </div>
             </div>
             <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="emailMock">Email</Label>
                 <Input
-                id="email"
+                id="emailMock"
                 type="email"
                 placeholder="m@example.com"
                 required
                 />
             </div>
             <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
-                <Input id="password" type="password" />
+                <Label htmlFor="passwordMock">Password</Label>
+                <Input id="passwordMock" type="password" />
             </div>
-            <Alert className="bg-muted text-muted-foreground border-none">
-                 <AlertDescription>This is mock login/register for demonstration purpose only</AlertDescription>
-            </Alert>
-            <Button type="submit" className="w-fit mt-2">
+
+            <Button type="submit" className="w-full mt-2">
                 Create an account
             </Button>
-            <Button variant="outline" className="w-fit">
-                Sign up with GitHub
-            </Button>
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">
+                  Or continue with
+                </span>
+              </div>
+            </div>
+            <OAuthButtons />
         </div>
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
