@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, ShoppingCart } from "lucide-react"
 
 import {
   Sidebar,
@@ -41,11 +41,16 @@ const items = [
     url: "#",
     icon: Settings,
   },
+  {
+    title: "Product Detail",
+    url: "/product/1",
+    icon: ShoppingCart,
+  },
 ]
 
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar {...props}>
+    <Sidebar collapsible="icon" variant="floating" {...props}>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>

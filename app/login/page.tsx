@@ -92,7 +92,7 @@ export default function LoginPage() {
                 />
               </div>
 
-              <Button disabled={isLoading} className="mt-2 w-full">
+              <Button disabled={isLoading} className="mt-2 w-full text-white">
                 {isLoading && (
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 )}

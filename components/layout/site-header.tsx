@@ -4,7 +4,7 @@ import { EquinoxHeader } from "@/components/equinox-header"
 
 export function SiteHeader() {
   return (
-    <EquinoxHeader className="border-b bg-background">
+    <EquinoxHeader className="bg-transparent">
       <LanguageSwitcher />
       <AuthPopover />
     </EquinoxHeader>

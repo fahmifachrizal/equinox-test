@@ -25,8 +25,7 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
   // Poll for scripts to be ready
   useEffect(() => {
     const checkScripts = () => {
-      // Topology might need p5, so let's check for it too (or just THREE if p5 isn't used)
-      // Actually vanta.topology usually depends on p5.js in some versions.
+      // Ensure Vanta and its dependencies (THREE or p5) are available
       const hasThree = typeof window !== "undefined" && !!window.THREE
       const hasP5 = typeof window !== "undefined" && !!window.p5
       const hasVanta = typeof window !== "undefined" && window.VANTA?.TOPOLOGY
@@ -55,15 +54,13 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
   useEffect(() => {
     if (!scriptsReady) return
     if (!vantaRef.current) return
-    // Wait for theme to be resolved to avoid flashing wrong colors
+    // Prevent color flashing by waiting for theme resolution
     if (!resolvedTheme) return
 
     const isDark = theme === "dark" || resolvedTheme === "dark"
     
-    // exact colors as requested:
-    // light: lines: 0f91b2, bg: 0a0a0a
-    // dark: lines: 00b5d4, bg: ffffff
-    const color = isDark ? 0x00b5d4 : 0x0f91b2
+    // Brand primary color #1EA8D2
+    const color = 0x1EA8D2
     const backgroundColor = isDark ? 0xfafafa : 0x0a0a0a
 
     try {
@@ -92,7 +89,7 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
       })
       console.log(`Vanta initialized: ${isDark ? 'Dark' : 'Light'} (Bg: ${backgroundColor.toString(16)})`)
       
-      // Trigger fade in after a short delay to allow canvas to render
+      // Fade in container after initialization
       setTimeout(() => {
         setOpacity(1)
       }, 100)
@@ -102,7 +99,7 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
     }
 
     return () => {
-      // Fade out before destroying (optional, but smoother)
+      // Cleanup effect
       setOpacity(0)
       if (vantaEffectRef.current) {
         vantaEffectRef.current.destroy()
@@ -111,7 +108,7 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
     }
   }, [scriptsReady, theme, resolvedTheme])
 
-  // Calculate background color for the container (placeholder)
+  // Initial background color placeholder
   const isDark = theme === "dark" || resolvedTheme === "dark"
   const bgColor = isDark ? "#fafafa" : "#0a0a0a"
 

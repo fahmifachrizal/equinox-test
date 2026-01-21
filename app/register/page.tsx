@@ -47,7 +47,7 @@ export default function Register() {
                 <Input id="passwordMock" type="password" />
             </div>
 
-            <Button type="submit" className="w-full mt-2">
+            <Button type="submit" className="w-full mt-2 text-white">
                 Create an account
             </Button>
             <div className="relative">
