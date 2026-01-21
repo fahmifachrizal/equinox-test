@@ -276,9 +276,12 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={
-                        header.column.id === "actions" ? "w-[50px]" : ""
-                      }>
+                      style={{
+                        width:
+                          header.column.columnDef.size === 150
+                            ? undefined
+                            : header.column.columnDef.size,
+                      }}>
                       {header.isPlaceholder
                         ? null
                         : flexRender(
