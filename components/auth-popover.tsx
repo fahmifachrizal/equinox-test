@@ -23,9 +23,6 @@ export function AuthPopover() {
   const [isLoading, setIsLoading] = React.useState(false)
   const router = useRouter()
 
-
-
-
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
@@ -41,7 +38,7 @@ export function AuthPopover() {
         setIsOpen(false)
         router.refresh()
       } else {
-          console.error("Login failed")
+        console.error("Login failed")
       }
     } catch (error) {
       console.error("Login error", error)
@@ -53,7 +50,7 @@ export function AuthPopover() {
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="secondary" size="sm" className="gap-2">
+        <Button variant="default" size="sm" className="gap-2">
           <User className="size-4" />
           Login
         </Button>
@@ -91,10 +88,10 @@ export function AuthPopover() {
           </div>
           <div className="flex flex-col gap-2">
             <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Login
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              Login
             </Button>
-             <div className="relative my-2">
+            <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
                 <span className="w-full border-t" />
               </div>
@@ -106,10 +103,10 @@ export function AuthPopover() {
             </div>
             <OAuthButtons isLoading={isLoading} />
             <div className="text-center text-xs mt-2">
-                Didn&apos;t have account?{" "}
-                <Link href="/register" className="underline text-primary">
-                    register here
-                </Link>
+              Didn&apos;t have account?{" "}
+              <Link href="/register" className="underline text-primary">
+                register here
+              </Link>
             </div>
           </div>
         </form>

@@ -1,21 +1,11 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-
-type LayoutType = 'fixed' | 'full'
+import { create } from "zustand"
 
 interface LayoutState {
-  layout: LayoutType
-  setLayout: (layout: LayoutType) => void
+  isScrolled: boolean
+  setIsScrolled: (isScrolled: boolean) => void
 }
 
-export const useLayoutStore = create<LayoutState>()(
-  persist(
-    (set) => ({
-      layout: 'fixed',
-      setLayout: (layout) => set({ layout }),
-    }),
-    {
-      name: 'layout-storage', 
-    }
-  )
-)
+export const useLayoutStore = create<LayoutState>()((set) => ({
+  isScrolled: false,
+  setIsScrolled: (isScrolled) => set({ isScrolled }),
+}))

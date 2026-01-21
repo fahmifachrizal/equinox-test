@@ -1,92 +1,49 @@
-import { User } from "./columns"
-import { UserTable } from "./user-table"
-import { MainLayout } from "@/components/layout/main-layout";
+import { Product } from "./columns"
+import { ProductTable } from "./user-table"
+import { MainLayout } from "@/components/layout/main-layout"
 
-async function getData(): Promise<User[]> {
-  // Fetch data from your API here.
-  return [
+async function getData(
+  page: number = 1,
+  limit: number = 10,
+): Promise<{
+  data: Product[]
+  meta: { total: number; page: number; limit: number; pageCount: number }
+}> {
+  const res = await fetch(
+    `http://localhost:3000/api/products?page=${page}&limit=${limit}`,
     {
-      id: "728ed52f",
-      name: "John Doe",
-      status: "pending",
-      email: "m@example.com",
-      role: "user",
+      cache: "no-store",
+      next: { tags: ["products"] },
     },
-    {
-        id: "728ed52f",
-         name: "Jane Smith",
-        status: "pending",
-        email: "example@gmail.com",
-        role: "admin",
-      },
-      {
-        id: "728ed52f",
-        name: "Bob Johnson",
-        status: "active",
-        email: "bob@example.com",
-        role: "user",
-      },
-       {
-        id: "728ed52f",
-        name: "Alice Brown",
-        status: "inactive",
-        email: "alice@example.com",
-        role: "guest",
-      },
-      {
-        id: "728ed52f",
-        name: "Charlie Wilson",
-        status: "active",
-        email: "charlie@example.com",
-        role: "user",
-      },
-      {
-        id: "728ed52f",
-        name: "David Lee",
-        status: "pending",
-        email: "david@example.com",
-        role: "admin",
-      },
-       {
-        id: "728ed52f",
-        name: "Eva Green",
-        status: "inactive",
-        email: "eva@example.com",
-        role: "user",
-      },
-      {
-        id: "728ed52f",
-        name: "Frank White",
-        status: "active",
-        email: "frank@example.com",
-        role: "guest",
-      },
-      {
-        id: "728ed52f",
-         name: "Grace Hall",
-        status: "pending",
-        email: "grace@example.com",
-        role: "user",
-      },
-      {
-        id: "728ed52f",
-        name: "Henry Turner",
-        status: "inactive",
-        email: "henry@example.com",
-        role: "admin",
-      },
-  ]
+  )
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch data")
+  }
+
+  return res.json()
 }
 
-export default async function Page() {
-  const data = await getData()
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
+  const params = await searchParams
+  const page = typeof params.page === "string" ? parseInt(params.page) : 1
+  const limit = typeof params.limit === "string" ? parseInt(params.limit) : 10
+
+  const { data, meta } = await getData(page, limit)
 
   return (
     <MainLayout>
-        <div className="container mx-auto py-10">
-            <h1 className="text-3xl font-bold mb-5">User Management</h1>
-            <UserTable data={data} />
-        </div>
+      <div className="container mx-auto">
+        <ProductTable
+          data={data}
+          title="Product Management"
+          pageCount={meta.pageCount}
+        />
+      </div>
     </MainLayout>
   )
 }

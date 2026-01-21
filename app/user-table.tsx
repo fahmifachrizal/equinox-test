@@ -1,12 +1,21 @@
 "use client"
 
-import { columns, User } from "./columns"
+import { columns, Product } from "./columns"
 import { DataTable } from "./data-table"
 
-interface UserTableProps {
-  data: User[]
+interface ProductTableProps {
+  data: Product[]
+  title?: string
+  pageCount?: number
 }
 
-export function UserTable({ data }: UserTableProps) {
-  return <DataTable columns={columns} data={data} />
+export function ProductTable({ data, title, pageCount }: ProductTableProps) {
+  return (
+    <DataTable
+      columns={columns}
+      data={data}
+      title={title}
+      pageCount={pageCount}
+    />
+  )
 }

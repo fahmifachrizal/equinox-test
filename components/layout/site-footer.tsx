@@ -5,10 +5,14 @@ export function SiteFooter() {
         © 2026 Equinox Inc. All rights reserved.
       </p>
       <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-        <a className="text-xs hover:underline underline-offset-4" href="#">
+        <a
+          className="text-xs text-muted-foreground hover:text-accent hover:underline underline-offset-4 transition-colors"
+          href="#">
           Terms of Service
         </a>
-        <a className="text-xs hover:underline underline-offset-4" href="#">
+        <a
+          className="text-xs text-muted-foreground hover:text-accent hover:underline underline-offset-4 transition-colors"
+          href="#">
           Privacy
         </a>
       </nav>
