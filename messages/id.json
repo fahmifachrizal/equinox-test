@@ -1,0 +1,65 @@
+{
+    "common": {
+        "loading": "Memuat...",
+        "error": "Terjadi kesalahan",
+        "save": "Simpan",
+        "cancel": "Batal",
+        "edit": "Ubah",
+        "delete": "Hapus",
+        "add": "Tambah",
+        "search": "Cari",
+        "noResults": "Tidak ada hasil"
+    },
+    "sidebar": {
+        "home": "Beranda",
+        "products": "Q1: Produk (fakestoreapi.com)",
+        "berries": "Q2: Beri (pokeapi.co)"
+    },
+    "products": {
+        "title": "Produk",
+        "addProduct": "Tambah Produk",
+        "editProduct": "Ubah Produk",
+        "columns": {
+            "image": "Gambar",
+            "title": "Judul",
+            "price": "Harga",
+            "category": "Kategori",
+            "description": "Deskripsi",
+            "actions": "Aksi"
+        }
+    },
+    "berries": {
+        "title": "Beri",
+        "addBerry": "Tambah Beri",
+        "editBerry": "Ubah Beri",
+        "viewDetails": "Lihat detail",
+        "columns": {
+            "image": "Gambar",
+            "name": "Nama",
+            "firmness": "Kekerasan",
+            "size": "Ukuran",
+            "growth": "Waktu Tumbuh",
+            "flavors": "Rasa",
+            "naturalGift": "Natural Gift",
+            "actions": "Aksi"
+        }
+    },
+    "table": {
+        "pagination": {
+            "previous": "Sebelumnya",
+            "next": "Berikutnya",
+            "page": "Halaman",
+            "of": "dari",
+            "rowsPerPage": "Baris per halaman"
+        },
+        "noData": "Tidak ada data"
+    },
+    "search": {
+        "placeholder": "Cari produk atau beri...",
+        "placeholderProducts": "Cari produk lainnya...",
+        "placeholderBerries": "Cari beri lainnya...",
+        "currentlyViewing": "Sedang dilihat",
+        "suggestions": "Saran",
+        "results": "Hasil"
+    }
+}

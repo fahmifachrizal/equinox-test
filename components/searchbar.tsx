@@ -178,11 +178,22 @@ export function Searchbar() {
     return Math.max(0, totalCount - 5)
   }, [allProducts.length, allBerries.length])
 
+  // Extract current locale from pathname
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en" // Default
+  }, [pathname])
+
   const handleSelect = (item: SearchResult) => {
+    const localePrefix = currentLocale ? `/${currentLocale}` : ""
     if (item.type === "product") {
-      router.push(`/product/${item.id}`)
+      router.push(`${localePrefix}/product/${item.id}`)
     } else {
-      router.push(`/berries/${item.id}`)
+      router.push(`${localePrefix}/berries/${item.id}`)
     }
     setComboboxOpen(false)
     setSearchQuery("")

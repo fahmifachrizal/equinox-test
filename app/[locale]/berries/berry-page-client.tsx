@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useBerriesStore } from "@/hooks/use-berries-store"
 import { berriesApi } from "@/lib/api/berries"
 import { BerryTable } from "@/components/berries/berry-table"
@@ -9,6 +10,7 @@ import { MainLayout } from "@/components/layout/main-layout"
 import { Skeleton } from "@/components/ui/skeleton"
 
 export function BerryPageClient() {
+  const t = useTranslations("berries")
   const searchParams = useSearchParams()
   const { berries, total, isLoaded, hasHydrated, setBerries } =
     useBerriesStore()
@@ -73,7 +75,7 @@ export function BerryPageClient() {
       <div className="container mx-auto pb-40">
         <BerryTable
           data={displayedBerries}
-          title="Berries Management"
+          title={t("title")}
           pageCount={pageCount}
           manualPagination={true}
           isLoading={isLoading}

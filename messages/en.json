@@ -1,0 +1,65 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "An error occurred",
+        "save": "Save",
+        "cancel": "Cancel",
+        "edit": "Edit",
+        "delete": "Delete",
+        "add": "Add",
+        "search": "Search",
+        "noResults": "No results found"
+    },
+    "sidebar": {
+        "home": "Home",
+        "products": "Q1: Products (fakestoreapi.com)",
+        "berries": "Q2: Berries (pokeapi.co)"
+    },
+    "products": {
+        "title": "Products",
+        "addProduct": "Add Product",
+        "editProduct": "Edit Product",
+        "columns": {
+            "image": "Image",
+            "title": "Title",
+            "price": "Price",
+            "category": "Category",
+            "description": "Description",
+            "actions": "Actions"
+        }
+    },
+    "berries": {
+        "title": "Berries",
+        "addBerry": "Add Berry",
+        "editBerry": "Edit Berry",
+        "viewDetails": "View details",
+        "columns": {
+            "image": "Image",
+            "name": "Name",
+            "firmness": "Firmness",
+            "size": "Size",
+            "growth": "Growth Time",
+            "flavors": "Flavors",
+            "naturalGift": "Natural Gift",
+            "actions": "Actions"
+        }
+    },
+    "table": {
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "page": "Page",
+            "of": "of",
+            "rowsPerPage": "Rows per page"
+        },
+        "noData": "No data available"
+    },
+    "search": {
+        "placeholder": "Search products or berries...",
+        "placeholderProducts": "Search other products...",
+        "placeholderBerries": "Search other berries...",
+        "currentlyViewing": "Currently viewing",
+        "suggestions": "Suggestions",
+        "results": "Results"
+    }
+}

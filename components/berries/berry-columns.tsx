@@ -151,7 +151,7 @@ export const columns: ColumnDef<Berry>[] = [
     },
     cell: ({ row }) => (
       <div className="capitalize text-center">
-        {row.getValue("firmness").toString().replace("-", " ")}
+        {(row.getValue("firmness") as string).replace("-", " ")}
       </div>
     ),
   },

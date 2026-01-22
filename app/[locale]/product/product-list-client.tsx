@@ -2,12 +2,14 @@
 
 import * as React from "react"
 import { useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useProductsStore } from "@/hooks/use-products-store"
 import { productsApi } from "@/lib/api/products"
 import { ProductTable } from "@/components/products/product-table"
 import { MainLayout } from "@/components/layout/main-layout"
 
 export function ProductListClient() {
+  const t = useTranslations("products")
   const searchParams = useSearchParams()
   const { products, hasHydrated, setProducts } = useProductsStore()
   const [isLoading, setIsLoading] = React.useState(true)
@@ -63,7 +65,7 @@ export function ProductListClient() {
       <div className="container mx-auto">
         <ProductTable
           data={filteredProducts}
-          title="Product Management"
+          title={t("title")}
           isLoading={isLoading}
         />
       </div>

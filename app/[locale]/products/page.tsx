@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { ProductListClient } from "@/app/product/product-list-client"
+import { ProductListClient } from "@/app/[locale]/product/product-list-client"
 import { MainLayout } from "@/components/layout/main-layout"
 import { Skeleton } from "@/components/ui/skeleton"
 
