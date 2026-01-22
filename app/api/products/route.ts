@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   try {
     // Fetch from Fake Store API with a timeout or signal if needed, but for now just basic check
     const response = await fetch("https://fakestoreapi.com/products", {
-      next: { revalidate: 3600 }, // Cache for 1 hour
+      cache: "no-store",
       headers: {
         "User-Agent": "Mozilla/5.0",
         Accept: "application/json",
