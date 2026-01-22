@@ -18,24 +18,20 @@ export function ProductListClient() {
   const limit = parseInt(searchParams.get("limit") || "10")
   const search = searchParams.get("search") || ""
 
-  // Wait for hydration, then fetch only if store is empty
   React.useEffect(() => {
-    // Wait until persist has hydrated from localStorage
     if (!hasHydrated) return
 
-    // If we have products (from localStorage), use them
     if (products.length > 0) {
       setIsLoading(false)
       return
     }
 
-    // Only fetch if store is truly empty after hydration
     async function fetchProducts() {
       try {
         const data = await productsApi.getAll()
         setProducts(data)
       } catch (error) {
-        console.error("Failed to fetch products:", error)
+        console.error("Fetch failed:", error)
       } finally {
         setIsLoading(false)
       }

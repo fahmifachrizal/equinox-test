@@ -18,7 +18,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { cn } from "@/lib/utils"
 import { useProductsStore } from "@/hooks/use-products-store"
 import { toast } from "sonner"
 import {
@@ -272,7 +271,7 @@ export const createColumns = (t: any): ColumnDef<Product>[] => [
               {description}
             </div>
           </HoverCardTrigger>
-          <HoverCardContent className="w-[400px]">
+          <HoverCardContent className="w-100">
             <p className="text-sm text-muted-foreground leading-relaxed whitespace-normal ">
               {description}
             </p>
@@ -322,11 +321,6 @@ export const createColumns = (t: any): ColumnDef<Product>[] => [
   {
     id: "actions",
     size: 50,
-    header: () => (
-      <div className="flex w-full h-8 justify-center items-center">
-        {t?.columns?.actions || "Actions"}
-      </div>
-    ),
     cell: ({ row }) => <ActionCell row={row} />,
   },
 ]

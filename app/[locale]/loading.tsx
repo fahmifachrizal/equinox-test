@@ -6,7 +6,7 @@ export default function Loading() {
     <MainLayout>
       <div className="container mx-auto space-y-4 pt-4">
         <Skeleton className="h-8 w-1/3" />
-        <Skeleton className="h-[400px] w-full" />
+        <Skeleton className="h-100 w-full" />
       </div>
     </MainLayout>
   )

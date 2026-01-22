@@ -33,7 +33,7 @@ export function AuthLayout({ children, className, ...props }: AuthLayoutProps) {
           <VantaBackground className="absolute inset-0 h-full w-full" />
         </div>
         <div className="flex h-full items-center p-8 lg:p-24">
-          <div className="mx-0 flex w-full flex-col justify-center space-y-10 sm:w-[550px]">
+          <div className="mx-0 flex w-full flex-col justify-center space-y-10 sm:w-137.5">
             {children}
           </div>
         </div>

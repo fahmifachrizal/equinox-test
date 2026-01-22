@@ -8,7 +8,7 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
   const { isScrolled } = useLayoutStore()
 
   return (
-    <div className="flex flex-1 w-full max-w-screen-2xl">
+    <div className="flex w-full max-w-screen-2xl">
       <AppSidebar
         className={cn(
           "sticky self-start border-r bg-transparent hidden md:block transition-[top] duration-200 ease-in-out h-full",
@@ -19,9 +19,9 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
         }}
       />
 
-      <SidebarInset className="flex flex-col min-w-0 flex-1 h-auto">
+      <SidebarInset className="flex flex-col min-w-0 h-auto">
         <div className="flex flex-col w-full pt-0 pb-6 px-10 mx-auto max-w-screen-2xl">
-          <main className="flex flex-col flex-1 gap-4 bg-transparent">
+          <main className="flex flex-col gap-4 bg-transparent">
             {children}
           </main>
         </div>

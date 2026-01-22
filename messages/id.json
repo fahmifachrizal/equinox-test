@@ -121,9 +121,9 @@
             "description": "Selamat datang kembali! Silakan masukkan detail Anda di bawah untuk masuk. Akses dasbor dan kelola pengaturan Anda.",
             "demoCredentials": "Kredensial Demo",
             "demoDescription": "Gunakan {username} / {password} untuk menguji Fake Store API.",
-            "username": "Nama Pengguna",
+            "username": "Username",
             "usernamePlaceholder": "mor_2314",
-            "password": "Kata Sandi",
+            "password": "Password",
             "passwordPlaceholder": "••••••••",
             "signIn": "Masuk",
             "orContinueWith": "Atau lanjutkan dengan",
@@ -136,9 +136,9 @@
             "description": "Masukkan detail Anda di bawah untuk membuat akun dan mulai.",
             "email": "Email",
             "emailPlaceholder": "nama@contoh.com",
-            "username": "Nama Pengguna",
+            "username": "Username",
             "usernamePlaceholder": "johndoe",
-            "password": "Kata Sandi",
+            "password": "Password",
             "passwordPlaceholder": "••••••••",
             "signUp": "Daftar",
             "orContinueWith": "Atau lanjutkan dengan",
@@ -147,29 +147,24 @@
             "registerFailed": "Pendaftaran gagal"
         }
     },
-    "table": {
-        "pagination": {
-            "previous": "Sebelumnya",
-            "next": "Berikutnya",
-            "page": "Halaman",
-            "of": "dari",
-            "rowsPerPage": "Baris per halaman"
-        },
-        "noData": "Tidak ada data"
-    },
     "search": {
-        "placeholder": "Cari produk atau berry...",
+        "placeholder": "Cari produk atau beri...",
         "placeholderProducts": "Cari produk lainnya...",
-        "placeholderBerries": "Cari berry lainnya...",
+        "placeholderBerries": "Cari beri lainnya...",
         "currentlyViewing": "Sedang melihat",
         "suggestions": "Saran",
-        "results": "Hasil"
+        "results": "Hasil",
+        "noResults": "Tidak ada hasil ditemukan",
+        "types": {
+            "product": "produk",
+            "berry": "beri"
+        }
     },
     "authPopover": {
         "quickLogin": "Login Cepat",
         "description": "Masukkan kredensial Anda untuk mengakses akun.",
-        "username": "Nama Pengguna",
-        "password": "Kata Sandi",
+        "username": "Username",
+        "password": "Password",
         "login": "Masuk",
         "orContinueWith": "Atau lanjutkan dengan",
         "noAccount": "Belum punya akun?",
@@ -178,6 +173,21 @@
     "dataTable": {
         "filter": "Filter",
         "rows": "baris",
-        "columns": "Kolom"
+        "columns": "Kolom",
+        "pagination": {
+            "previous": "Sebelumnya",
+            "next": "Berikutnya",
+            "page": "Halaman",
+            "of": "dari",
+            "rowsPerPage": "Baris per halaman",
+            "showing": "Menampilkan",
+            "to": "sampai"
+        },
+        "noData": "Tidak ada data"
+    },
+    "errorPage": {
+        "title": "Terjadi kesalahan!",
+        "description": "Kami mengalami kesalahan yang tidak terduga. Silakan coba lagi atau hubungi dukungan jika masalah berlanjut.",
+        "tryAgain": "Coba lagi"
     }
 }

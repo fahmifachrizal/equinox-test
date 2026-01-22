@@ -6,22 +6,10 @@ const locales = ["en", "id"] as const
 const intlMiddleware = createMiddleware({
   locales,
   defaultLocale: "en",
-  localePrefix: "as-needed",
+  localePrefix: "always",
 })
 
 export default function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname
-
-  // Skip middleware for the home page (keep it English only)
-  if (pathname === "/") {
-    return
-  }
-
-  // Redirect /en or /id (bare locale paths) to home
-  if (pathname === "/en" || pathname === "/id") {
-    return NextResponse.redirect(new URL("/", request.url))
-  }
-
   return intlMiddleware(request)
 }
 

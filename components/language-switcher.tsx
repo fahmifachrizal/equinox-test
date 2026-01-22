@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { useLocale } from "next-intl"
 import { Button } from "@/components/ui/button"
 import {
   Popover,
@@ -43,27 +44,15 @@ function LanguageBadge({
 export function LanguageSwitcher() {
   const router = useRouter()
   const pathname = usePathname()
+  const locale = useLocale()
 
   const [open, setOpen] = React.useState(false)
-  const [mounted, setMounted] = React.useState(false)
 
-  // Determine current locale from pathname
-  const currentLocale = React.useMemo(() => {
-    const segments = pathname.split("/")
-    const potentialLocale = segments[1]
-    if (potentialLocale === "en" || potentialLocale === "id") {
-      return potentialLocale as LanguageCode
-    }
-    return "en" as LanguageCode
-  }, [pathname])
-
+  const currentLocale = locale as LanguageCode
   const currentLanguage = languages.find((l) => l.code === currentLocale)!
 
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const handleLocaleChange = (newLocale: LanguageCode) => {
+    if (!pathname) return
     const segments = pathname.split("/")
     const currentLocaleInPath = segments[1]
 
@@ -81,15 +70,6 @@ export function LanguageSwitcher() {
     setOpen(false)
   }
 
-  if (!mounted) {
-    return (
-      <Button variant="outline" size="sm" className="gap-2">
-        <LanguageBadge code={currentLanguage.shortCode} active />
-        <span className="hidden sm:inline-block">{currentLanguage.label}</span>
-      </Button>
-    )
-  }
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -105,7 +85,7 @@ export function LanguageSwitcher() {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[140px] sm:w-32 flex flex-col p-1">
+        className="w-35 sm:w-32 flex flex-col p-1">
         {languages.map((lang) => (
           <div
             key={lang.code}
@@ -121,7 +101,7 @@ export function LanguageSwitcher() {
                 className={cn(
                   "scale-90",
                   !(currentLocale === lang.code) &&
-                    "group-hover:bg-accent group-hover:text-accent-foreground",
+                  "group-hover:bg-accent group-hover:text-accent-foreground",
                 )}
               />
             </div>

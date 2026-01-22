@@ -147,23 +147,18 @@
             "registerFailed": "Registration failed"
         }
     },
-    "table": {
-        "pagination": {
-            "previous": "Previous",
-            "next": "Next",
-            "page": "Page",
-            "of": "of",
-            "rowsPerPage": "Rows per page"
-        },
-        "noData": "No data available"
-    },
     "search": {
         "placeholder": "Search products or berries...",
         "placeholderProducts": "Search other products...",
         "placeholderBerries": "Search other berries...",
         "currentlyViewing": "Currently viewing",
         "suggestions": "Suggestions",
-        "results": "Results"
+        "results": "Results",
+        "noResults": "No results found",
+        "types": {
+            "product": "product",
+            "berry": "berry"
+        }
     },
     "authPopover": {
         "quickLogin": "Quick Login",
@@ -178,6 +173,21 @@
     "dataTable": {
         "filter": "Filter",
         "rows": "rows",
-        "columns": "Columns"
+        "columns": "Columns",
+        "pagination": {
+            "previous": "Previous",
+            "next": "Next",
+            "page": "Page",
+            "of": "of",
+            "rowsPerPage": "Rows per page",
+            "showing": "Showing",
+            "to": "to"
+        },
+        "noData": "No data available"
+    },
+    "errorPage": {
+        "title": "Something went wrong!",
+        "description": "We encountered an unexpected error. Please try again or contact support if the problem persists.",
+        "tryAgain": "Try again"
     }
 }

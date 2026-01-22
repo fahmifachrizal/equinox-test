@@ -16,7 +16,6 @@ export type Product = {
   status?: "active" | "draft" | "archived"
 }
 
-// For creating new products (without id, rating, reviews)
 export type ProductInput = Omit<Product, "id" | "rating" | "reviews">
 
 interface ProductsState {
@@ -48,7 +47,6 @@ export const useProductsStore = create<ProductsState>()(
         return get().products.find((p) => p.id === id)
       },
 
-      // Add single product to cache (e.g., from detail page fetch)
       addProduct: (product) => {
         const existing = get().products.find((p) => p.id === product.id)
         if (!existing) {
@@ -56,7 +54,6 @@ export const useProductsStore = create<ProductsState>()(
         }
       },
 
-      // Create new product with generated ID
       addNewProduct: (input) => {
         const newProduct: Product = {
           ...input,
@@ -72,7 +69,6 @@ export const useProductsStore = create<ProductsState>()(
         return newProduct
       },
 
-      // Update existing product
       updateProduct: (id, updates) => {
         const existing = get().products.find((p) => p.id === id)
         if (!existing) return false
@@ -85,7 +81,6 @@ export const useProductsStore = create<ProductsState>()(
         return true
       },
 
-      // Delete product
       deleteProduct: (id) => {
         const existing = get().products.find((p) => p.id === id)
         if (!existing) return false
@@ -103,7 +98,6 @@ export const useProductsStore = create<ProductsState>()(
     {
       name: "equinox-products-store",
       onRehydrateStorage: () => (state) => {
-        // Called after hydration completes
         state?.setHasHydrated(true)
       },
     },

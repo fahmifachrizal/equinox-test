@@ -28,12 +28,10 @@ export const useBerriesStore = create<BerriesState>()(
       setBerries: (newBerries, total) => {
         const state = get()
 
-        // 1. Separate custom berries
         const customBerries = state.berries.filter((b) =>
           b.id.toString().startsWith("custom-"),
         )
 
-        // 2. Identify modified standard berries
         const modifiedBerries = new Map(
           state.berries
             .filter(
@@ -42,7 +40,6 @@ export const useBerriesStore = create<BerriesState>()(
             .map((b) => [b.id, b]),
         )
 
-        // 3. Merge incoming API berries with local modifications
         const mergedBerries = newBerries.map((apiBerry) =>
           modifiedBerries.has(apiBerry.id)
             ? modifiedBerries.get(apiBerry.id)!

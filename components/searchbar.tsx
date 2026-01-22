@@ -2,77 +2,34 @@
 
 import * as React from "react"
 import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Popover, PopoverContent, PopoverAnchor } from "@/components/ui/popover"
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group"
-import { Search, ChevronsUpDown } from "lucide-react"
+import { Search } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { useProductsStore, Product } from "@/hooks/use-products-store"
-import { productsApi } from "@/lib/api/products"
+import { useProductsStore } from "@/hooks/use-products-store"
 import { useBerriesStore } from "@/hooks/use-berries-store"
-import { berriesApi } from "@/lib/api/berries"
 
 export function Searchbar() {
   const router = useRouter()
   const pathname = usePathname()
+  const t = useTranslations("search")
 
-  // Use global products and berries stores
-  const {
-    products: allProducts,
-    hasHydrated: productsHydrated,
-    setProducts,
-  } = useProductsStore()
-  const {
-    berries: allBerries,
-    hasHydrated: berriesHydrated,
-    setBerries,
-  } = useBerriesStore()
+  const { products: allProducts } = useProductsStore()
+  const { berries: allBerries } = useBerriesStore()
 
   const [searchQuery, setSearchQuery] = React.useState("")
   const [comboboxOpen, setComboboxOpen] = React.useState(false)
 
-  // Auth pages don't need search
   const isAuthPage =
     pathname?.startsWith("/auth") ||
     pathname?.startsWith("/login") ||
     pathname?.startsWith("/register")
 
-  // Fetch logic for Products
-  React.useEffect(() => {
-    if (!productsHydrated) return
-    if (allProducts.length > 0) return
-
-    async function fetchProducts() {
-      try {
-        const data = await productsApi.getAll()
-        setProducts(data)
-      } catch (error) {
-        console.error("Failed to fetch products:", error)
-      }
-    }
-    fetchProducts()
-  }, [productsHydrated, allProducts.length, setProducts])
-
-  // Fetch logic for Berries
-  React.useEffect(() => {
-    if (!berriesHydrated) return
-    if (allBerries.length > 0) return
-
-    async function fetchBerries() {
-      try {
-        const { data, meta } = await berriesApi.getAll({ limit: 60 })
-        setBerries(data, meta.total)
-      } catch (error) {
-        console.error("Failed to fetch berries:", error)
-      }
-    }
-    fetchBerries()
-  }, [berriesHydrated, allBerries.length, setBerries])
-
-  // Unified Search Result Type
   interface SearchResult {
     id: string
     title: string
@@ -86,7 +43,6 @@ export function Searchbar() {
   const currentItem = React.useMemo<SearchResult | null>(() => {
     if (!pathname) return null
 
-    // Check for product
     const productMatch = pathname.match(/^\/product\/([^/]+)$/)
     if (productMatch) {
       const id = productMatch[1]
@@ -104,7 +60,6 @@ export function Searchbar() {
       }
     }
 
-    // Check for berry
     const berryMatch = pathname.match(/^\/berries\/([^/]+)$/)
     if (berryMatch) {
       const id = berryMatch[1]
@@ -126,7 +81,6 @@ export function Searchbar() {
   }, [pathname, allProducts, allBerries])
 
   const filteredItems = React.useMemo(() => {
-    // 1. Normalize Products
     const productItems: SearchResult[] = allProducts.map((p) => ({
       id: p.id,
       title: p.title,
@@ -137,7 +91,6 @@ export function Searchbar() {
       original: p,
     }))
 
-    // 2. Normalize Berries
     const berryItems: SearchResult[] = allBerries.map((b) => ({
       id: b.id.toString(),
       title: `${b.name} Berry`,
@@ -151,7 +104,6 @@ export function Searchbar() {
 
     let allItems = [...productItems, ...berryItems]
 
-    // Exclude current item
     if (currentItem) {
       allItems = allItems.filter(
         (item) =>
@@ -173,19 +125,13 @@ export function Searchbar() {
       .slice(0, 5)
   }, [allProducts, allBerries, searchQuery, currentItem])
 
-  const remainingCount = React.useMemo(() => {
-    const totalCount = allProducts.length + allBerries.length
-    return Math.max(0, totalCount - 5)
-  }, [allProducts.length, allBerries.length])
-
-  // Extract current locale from pathname
   const currentLocale = React.useMemo(() => {
     const segments = pathname?.split("/") || []
     const potentialLocale = segments[1]
     if (potentialLocale === "en" || potentialLocale === "id") {
       return potentialLocale
     }
-    return "en" // Default
+    return "en"
   }, [pathname])
 
   const handleSelect = (item: SearchResult) => {
@@ -202,13 +148,12 @@ export function Searchbar() {
   const getPlaceholder = () => {
     if (currentItem) {
       return currentItem.type === "product"
-        ? "Search other products..."
-        : "Search other berries..."
+        ? t("placeholderProducts")
+        : t("placeholderBerries")
     }
-    return "Search products or berries..."
+    return t("placeholder")
   }
 
-  // Early exit for auth routes
   if (isAuthPage) {
     return null
   }
@@ -236,13 +181,13 @@ export function Searchbar() {
       </PopoverAnchor>
       <PopoverContent
         onOpenAutoFocus={(e: Event) => e.preventDefault()}
-        className="bg-popover w-[90vw] sm:w-[28rem] p-0 overflow-hidden"
+        className="bg-popover w-[90vw] sm:w-md p-0 overflow-hidden"
         align="start">
         <div className="h-fit max-h-[60vh] overflow-y-auto p-1">
           {currentItem && !searchQuery && (
             <div className="mb-2 border-b pb-2">
               <div className="text-xs text-muted-foreground px-4 py-1.5 font-medium">
-                Currently viewing
+                {t("currentlyViewing")}
               </div>
               <div className="flex items-center gap-3 rounded-sm px-4 py-1.5 text-sm select-none opacity-70">
                 <img
@@ -253,7 +198,7 @@ export function Searchbar() {
                   alt={currentItem.title}
                   className="w-10 h-10 object-contain rounded-md bg-secondary/30 p-1"
                   onError={(e) => {
-                    ;(e.target as HTMLImageElement).style.display = "none"
+                    ; (e.target as HTMLImageElement).style.display = "none"
                   }}
                 />
                 <div className="flex flex-col items-start flex-1 min-w-0">
@@ -264,7 +209,7 @@ export function Searchbar() {
                     <span className="capitalize">{currentItem.subtitle}</span>
                     <span>•</span>
                     <span className="font-medium text-foreground capitalize">
-                      {currentItem.type}
+                      {t(`types.${currentItem.type}`)}
                     </span>
                   </div>
                 </div>
@@ -274,12 +219,12 @@ export function Searchbar() {
 
           {filteredItems.length === 0 ? (
             <div className="py-6 text-center text-sm text-muted-foreground">
-              No results found
+              {t("noResults")}
             </div>
           ) : (
             <div className="p-2">
               <div className="text-xs text-muted-foreground px-2 py-1.5 font-medium">
-                {searchQuery ? "Results" : "Suggestions"}
+                {searchQuery ? t("results") : t("suggestions")}
               </div>
               {filteredItems.map((item) => (
                 <div
@@ -290,12 +235,11 @@ export function Searchbar() {
                     src={
                       item.image ||
                       "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/cheri-berry.png"
-                    } // Fallback logic simpler here
+                    }
                     alt={item.title}
                     className="w-10 h-10 object-contain rounded-md bg-secondary/30 p-1"
                     onError={(e) => {
-                      // Simple fallback if image fails, though BerryImage usage would be cleaner but this is generic
-                      ;(e.target as HTMLImageElement).style.display = "none"
+                      ; (e.target as HTMLImageElement).style.display = "none"
                     }}
                   />
                   <div className="flex flex-col items-start flex-1 min-w-0">
@@ -306,7 +250,7 @@ export function Searchbar() {
                       <span className="capitalize">{item.subtitle}</span>
                       <span>•</span>
                       <span className="font-medium text-foreground capitalize">
-                        {item.type}
+                        {t(`types.${item.type}`)}
                       </span>
                     </div>
                   </div>

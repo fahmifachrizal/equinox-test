@@ -16,7 +16,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+import { useTranslations, useLocale } from "next-intl"
+
 export function AuthPopover() {
+  const t = useTranslations("authPopover")
+  const locale = useLocale()
   const [isOpen, setIsOpen] = React.useState(false)
   const [username, setUsername] = React.useState("")
   const [password, setPassword] = React.useState("")
@@ -48,26 +52,11 @@ export function AuthPopover() {
     }
   }
 
-  // Determine if the current page is an authentication-related page
-  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
+  const isAuthPage =
+    pathname === `/${locale}/login` || pathname === `/${locale}/register`
 
   if (isAuthPage) {
     return null
-  }
-
-  const [mounted, setMounted] = React.useState(false)
-
-  React.useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return (
-      <Button variant="default" size="sm" className="gap-2 text-white">
-        <User className="size-4" />
-        Login
-      </Button>
-    )
   }
 
   return (
@@ -75,20 +64,18 @@ export function AuthPopover() {
       <PopoverTrigger asChild>
         <Button variant="default" size="sm" className="gap-2 text-white">
           <User className="size-4" />
-          Login
+          {t("login")}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-88 p-6" align="end">
         <form onSubmit={handleLogin} className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">Quick Login</h4>
-            <p className="text-sm text-muted-foreground">
-              Enter your credentials to access your account.
-            </p>
+            <h4 className="font-medium leading-none">{t("quickLogin")}</h4>
+            <p className="text-sm text-muted-foreground">{t("description")}</p>
           </div>
           <div className="grid gap-2">
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{t("username")}</Label>
               <Input
                 id="usernameMock"
                 value={username}
@@ -98,7 +85,7 @@ export function AuthPopover() {
               />
             </div>
             <div className="grid grid-cols-3 items-center gap-4">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("password")}</Label>
               <Input
                 id="passwordMock"
                 type="password"
@@ -110,9 +97,12 @@ export function AuthPopover() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <Button type="submit" disabled={isLoading} className="w-full text-white">
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full text-white">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Login
+              {t("login")}
             </Button>
             <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
@@ -120,15 +110,17 @@ export function AuthPopover() {
               </div>
               <div className="relative flex justify-center text-xs uppercase">
                 <span className="bg-background px-2 text-muted-foreground">
-                  Or continue with
+                  {t("orContinueWith")}
                 </span>
               </div>
             </div>
             <OAuthButtons isLoading={isLoading} />
             <div className="text-center text-xs mt-2">
-              Didn&apos;t have account?{" "}
-              <Link href="/register" className="underline text-primary">
-                register here
+              {t("noAccount")}{" "}
+              <Link
+                href={`/${locale}/register`}
+                className="underline text-primary">
+                {t("registerHere")}
               </Link>
             </div>
           </div>

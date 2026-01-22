@@ -5,6 +5,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTranslations } from "next-intl"
 import { useProductsStore, Product } from "@/hooks/use-products-store"
+import { productsApi } from "@/lib/api/products"
 import { ProductDetails } from "./product-details"
 import { MainLayout } from "@/components/layout/main-layout"
 import { Button } from "@/components/ui/button"
@@ -56,16 +57,12 @@ export function ProductPageClient({
     // Fetch if not in cache
     async function fetchProduct() {
       try {
-        const res = await fetch(`/api/products/${productId}`)
-        if (!res.ok) {
-          if (res.status === 404) {
-            setError(true)
-            setIsLoading(false)
-            return
-          }
-          throw new Error("Failed to fetch")
+        const data = await productsApi.getById(productId)
+        if (!data) {
+          setError(true)
+          setIsLoading(false)
+          return
         }
-        const data = await res.json()
         setProduct(data)
         addProduct(data)
       } catch {

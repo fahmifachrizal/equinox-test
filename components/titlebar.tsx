@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { useLocale } from "next-intl"
 import { cn } from "@/lib/utils"
 import { ModeToggle } from "@/components/mode-toggle"
 import { Searchbar } from "@/components/searchbar"
@@ -17,6 +18,8 @@ export function Titlebar({
   isScrolled,
   ...props
 }: TitlebarProps) {
+  const locale = useLocale()
+
   return (
     <header
       className={cn(
@@ -27,7 +30,7 @@ export function Titlebar({
       {...props}>
       {/* Logo section - aligned with sidebar width (16rem + padding) */}
       <div className="flex items-center gap-2 px-0 w-64 shrink-0">
-        <Link href="/" className="flex items-center gap-3">
+        <Link href={`/${locale}`} className="flex items-center gap-3">
           <div
             className={cn(
               "flex items-center justify-center rounded-lg transition-[width,height] duration-200 ease-in-out",

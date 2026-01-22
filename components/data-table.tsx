@@ -74,13 +74,11 @@ export function DataTable<TData, TValue>({
   const { isScrolled } = useLayoutStore()
   const t = useTranslations("dataTable")
 
-  // Parse pagination params
   const page = searchParams?.get("page") ? Number(searchParams.get("page")) : 1
   const per_page = searchParams?.get("limit")
     ? Number(searchParams.get("limit"))
     : 10
 
-  // Memoize pagination state to prevent unnecessary table re-renders
   const pagination = React.useMemo(
     () => ({
       pageIndex: page - 1,
@@ -89,7 +87,6 @@ export function DataTable<TData, TValue>({
     [page, per_page],
   )
 
-  // Pagination handler
   const [isPending, startTransition] = React.useTransition()
 
   const onPaginationChange = (updater: any) => {
@@ -98,7 +95,6 @@ export function DataTable<TData, TValue>({
 
     const params = new URLSearchParams(searchParams?.toString())
 
-    // Reset to page 1 on page size change
     if (newPagination.pageSize !== pagination.pageSize) {
       params.set("page", "1")
     } else {
@@ -141,7 +137,6 @@ export function DataTable<TData, TValue>({
           "sticky z-20 bg-background transition-[padding,top,border-color] duration-200 ease-in-out py-4 will-change-[padding,top]",
           isScrolled ? "top-28" : "top-48 border-transparent",
         )}>
-        {/* Controls bar */}
         <div className="flex items-center justify-between gap-4">
           {/* Filters - Left */}
           <div className="flex items-center gap-2">
@@ -207,24 +202,24 @@ export function DataTable<TData, TValue>({
           <div className="flex items-center gap-4 text-sm text-muted-foreground">
             <div className="flex items-center gap-2">
               <span>
-                Page {table.getState().pagination.pageIndex + 1} of{" "}
+                {t("pagination.page")} {table.getState().pagination.pageIndex + 1} {t("pagination.of")}{" "}
                 {table.getPageCount()}
               </span>
               {(table.getColumn(filterColumn)?.getFilterValue() as string) && (
                 <span className="text-muted-foreground/60">
-                  - Showing{" "}
+                  - {t("pagination.showing")}{" "}
                   {table.getFilteredRowModel().rows.length > 0
                     ? table.getState().pagination.pageIndex *
-                        table.getState().pagination.pageSize +
-                      1
+                    table.getState().pagination.pageSize +
+                    1
                     : 0}{" "}
-                  to{" "}
+                  {t("pagination.to")}{" "}
                   {Math.min(
                     (table.getState().pagination.pageIndex + 1) *
-                      table.getState().pagination.pageSize,
+                    table.getState().pagination.pageSize,
                     table.getFilteredRowModel().rows.length,
                   )}{" "}
-                  of {table.getFilteredRowModel().rows.length}
+                  {t("pagination.of")} {table.getFilteredRowModel().rows.length}
                 </span>
               )}
             </div>
@@ -272,7 +267,7 @@ export function DataTable<TData, TValue>({
           <TableHeader
             className={cn(
               "sticky z-20 bg-muted rounded-t-md overflow-hidden transition-[top] duration-200 ease-in-out will-change-[top]",
-              isScrolled ? "top-[160px]" : "top-[195px]",
+              isScrolled ? "top-40" : "top-48.75",
             )}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -290,9 +285,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   )
                 })}
@@ -335,7 +330,7 @@ export function DataTable<TData, TValue>({
                 <TableCell
                   colSpan={columns.length}
                   className="h-24 text-center">
-                  No results.
+                  {t("noData")}
                 </TableCell>
               </TableRow>
             )}

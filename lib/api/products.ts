@@ -7,7 +7,6 @@ const FAKESTORE_API = "https://fakestoreapi.com"
 const STATUSES = ["active", "draft", "archived"] as const
 
 export const productsApi = {
-  // Fetch all products (CLIENT-SIDE)
   async getAll(limit: number = 100): Promise<Product[]> {
     const res = await fetch(`${FAKESTORE_API}/products`)
 
@@ -34,7 +33,6 @@ export const productsApi = {
     }))
   },
 
-  // Fetch single product by ID (CLIENT-SIDE)
   async getById(id: string): Promise<Product | null> {
     const res = await fetch(`${FAKESTORE_API}/products/${id}`)
 
@@ -58,7 +56,6 @@ export const productsApi = {
     }
   },
 
-  // Create product (CLIENT-SIDE, FakeStore mock)
   async create(input: ProductInput): Promise<{ id: number }> {
     const res = await fetch(`${FAKESTORE_API}/products`, {
       method: "POST",
@@ -79,7 +76,6 @@ export const productsApi = {
     return res.json()
   },
 
-  // Update product (CLIENT-SIDE, FakeStore mock)
   async update(id: string, input: Partial<ProductInput>): Promise<Product> {
     const res = await fetch(`${FAKESTORE_API}/products/${id}`, {
       method: "PUT",
@@ -106,7 +102,6 @@ export const productsApi = {
     }
   },
 
-  // Delete product (CLIENT-SIDE, FakeStore mock)
   async delete(id: string): Promise<boolean> {
     const res = await fetch(`${FAKESTORE_API}/products/${id}`, {
       method: "DELETE",
