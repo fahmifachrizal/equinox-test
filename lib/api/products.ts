@@ -1,26 +1,64 @@
+"use client"
+
 import { Product, ProductInput } from "@/hooks/use-products-store"
 
 const FAKESTORE_API = "https://fakestoreapi.com"
 
+const STATUSES = ["active", "draft", "archived"] as const
+
 export const productsApi = {
-  // Fetch all products
+  // Fetch all products (CLIENT-SIDE)
   async getAll(limit: number = 100): Promise<Product[]> {
-    const res = await fetch(`/api/products?limit=${limit}`)
-    const data = await res.json()
-    return data.data || []
+    const res = await fetch(`${FAKESTORE_API}/products`)
+
+    if (!res.ok) {
+      throw new Error("Failed to fetch products")
+    }
+
+    const apiProducts = await res.json()
+
+    if (!Array.isArray(apiProducts)) {
+      throw new Error("Invalid FakeStoreAPI response")
+    }
+
+    return apiProducts.slice(0, limit).map((p: any) => ({
+      id: p.id?.toString(),
+      title: p.title || "No title",
+      description: p.description || "",
+      price: typeof p.price === "number" ? p.price : 0,
+      image: p.image || "",
+      category: p.category || "Uncategorized",
+      rating: p.rating?.rate || 0,
+      reviews: p.rating?.count || 0,
+      status: STATUSES[Math.floor(Math.random() * STATUSES.length)],
+    }))
   },
 
-  // Fetch single product by ID
+  // Fetch single product by ID (CLIENT-SIDE)
   async getById(id: string): Promise<Product | null> {
-    const res = await fetch(`/api/products/${id}`)
+    const res = await fetch(`${FAKESTORE_API}/products/${id}`)
+
     if (!res.ok) {
       if (res.status === 404) return null
       throw new Error("Failed to fetch product")
     }
-    return res.json()
+
+    const p = await res.json()
+
+    return {
+      id: p.id?.toString(),
+      title: p.title || "No title",
+      description: p.description || "",
+      price: typeof p.price === "number" ? p.price : 0,
+      image: p.image || "",
+      category: p.category || "Uncategorized",
+      rating: p.rating?.rate || 0,
+      reviews: p.rating?.count || 0,
+      status: "active",
+    }
   },
 
-  // Create new product (calls FakeStore API for mock effect)
+  // Create product (CLIENT-SIDE, FakeStore mock)
   async create(input: ProductInput): Promise<{ id: number }> {
     const res = await fetch(`${FAKESTORE_API}/products`, {
       method: "POST",
@@ -41,7 +79,7 @@ export const productsApi = {
     return res.json()
   },
 
-  // Update product (calls FakeStore API for mock effect)
+  // Update product (CLIENT-SIDE, FakeStore mock)
   async update(id: string, input: Partial<ProductInput>): Promise<Product> {
     const res = await fetch(`${FAKESTORE_API}/products/${id}`, {
       method: "PUT",
@@ -53,10 +91,22 @@ export const productsApi = {
       throw new Error("Failed to update product")
     }
 
-    return res.json()
+    const p = await res.json()
+
+    return {
+      id: p.id?.toString(),
+      title: p.title,
+      description: p.description,
+      price: p.price,
+      image: p.image,
+      category: p.category,
+      rating: p.rating?.rate || 0,
+      reviews: p.rating?.count || 0,
+      status: "active",
+    }
   },
 
-  // Delete product (calls FakeStore API for mock effect)
+  // Delete product (CLIENT-SIDE, FakeStore mock)
   async delete(id: string): Promise<boolean> {
     const res = await fetch(`${FAKESTORE_API}/products/${id}`, {
       method: "DELETE",
