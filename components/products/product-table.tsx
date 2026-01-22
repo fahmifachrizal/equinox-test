@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
-import { columns } from "@/components/products/product-columns"
+import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { createColumns } from "@/components/products/product-columns"
 import { DataTable } from "@/components/data-table"
 import { useLayoutStore } from "@/hooks/use-layout-store"
 import { toast } from "sonner"
@@ -25,7 +26,21 @@ export function ProductTable({
   isLoading,
 }: ProductTableProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const { isScrolled } = useLayoutStore()
+  const t = useTranslations("products")
+
+  const columns = React.useMemo(() => createColumns(t), [t])
+
+  // Get current locale
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
 
   return (
     <div className="w-full">
@@ -44,9 +59,11 @@ export function ProductTable({
               )}>
               {title}
             </h1>
-            <Button onClick={() => router.push("/product/add")} size="sm">
+            <Button
+              onClick={() => router.push(`/${currentLocale}/product/add`)}
+              size="sm">
               <Plus className="w-4 h-4 mr-2" />
-              Add Product
+              {t("addProduct")}
             </Button>
           </div>
         </div>
@@ -56,7 +73,9 @@ export function ProductTable({
         data={data}
         pageCount={pageCount}
         isLoading={isLoading}
-        onRowClick={(row) => router.push(`/product/${row.original.id}`)}
+        onRowClick={(row) =>
+          router.push(`/${currentLocale}/product/${row.original.id}`)
+        }
       />
     </div>
   )

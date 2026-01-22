@@ -10,23 +10,38 @@ export async function GET(request: Request) {
   const search = searchParams.get("search") ?? ""
 
   try {
-    // Fetch from Fake Store API
-    const response = await fetch("https://fakestoreapi.com/products")
+    // Fetch from Fake Store API with a timeout or signal if needed, but for now just basic check
+    const response = await fetch("https://fakestoreapi.com/products", {
+      next: { revalidate: 3600 }, // Cache for 1 hour
+    })
+
+    if (!response.ok) {
+      console.error(
+        `FakeStoreAPI error: ${response.status} ${response.statusText}`,
+      )
+      return NextResponse.json(
+        { error: `External API responded with status ${response.status}` },
+        { status: 502 }, // Bad Gateway
+      )
+    }
+
     const apiProducts = await response.json()
 
+    if (!Array.isArray(apiProducts)) {
+      console.error("FakeStoreAPI returned non-array response:", apiProducts)
+      throw new Error("Invalid response format from external API")
+    }
+
     // NOTE: For this demo, we fetch all products and filter/paginate in memory.
-    // In a real production app with thousands of records, this would be handled
-    // by database queries (e.g., SQL OFFSET/LIMIT) to avoid performance bottlenecks.
-    // Since the dataset is small (~20 items), client-side manipulation is acceptable here.
     const allProducts = apiProducts.map((p: any) => ({
-      id: p.id.toString(),
-      title: p.title,
-      description: p.description,
-      price: p.price,
-      image: p.image,
-      category: p.category,
-      rating: p.rating.rate,
-      reviews: p.rating.count,
+      id: p.id?.toString() || Math.random().toString(),
+      title: p.title || "No Title",
+      description: p.description || "",
+      price: typeof p.price === "number" ? p.price : 0,
+      image: p.image || "",
+      category: p.category || "Uncategorized",
+      rating: p.rating?.rate || 0,
+      reviews: p.rating?.count || 0,
       // Randomize status for demo variety
       status: STATUSES[Math.floor(Math.random() * STATUSES.length)],
     }))
@@ -39,7 +54,7 @@ export async function GET(request: Request) {
     }
 
     const total = filteredProducts.length
-    const pageCount = Math.ceil(total / limit)
+    const pageCount = Math.max(1, Math.ceil(total / limit))
     const start = (page - 1) * limit
     const end = start + limit
     const data = filteredProducts.slice(start, end)
@@ -53,10 +68,10 @@ export async function GET(request: Request) {
         pageCount,
       },
     })
-  } catch (error) {
-    console.error("Error fetching products:", error)
+  } catch (error: any) {
+    console.error("Error in /api/products GET:", error)
     return NextResponse.json(
-      { error: "Failed to fetch products" },
+      { error: "Failed to fetch products", details: error.message },
       { status: 500 },
     )
   }

@@ -3,7 +3,8 @@
 import * as React from "react"
 import { Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -15,11 +16,23 @@ import { InfoIcon } from "lucide-react"
 import { AuthLayout } from "@/components/auth-layout"
 
 export default function LoginPage() {
+  const t = useTranslations("auth.login")
   const [username, setUsername] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
   const router = useRouter()
+  const pathname = usePathname()
+
+  // Get current locale for navigation
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -38,10 +51,10 @@ export default function LoginPage() {
       if (response.ok) {
         router.push("/")
       } else {
-        setError(data.message || "Login failed")
+        setError(data.message || t("loginFailed"))
       }
     } catch (error) {
-      setError("An unexpected error occurred")
+      setError(t("unexpectedError"))
       console.error("Login error", error)
     } finally {
       setIsLoading(false)
@@ -52,26 +65,10 @@ export default function LoginPage() {
     <AuthLayout>
       <div className="flex flex-col space-y-2 text-left">
         <h1 className="border-l-4 border-accent pl-2 text-4xl font-semibold tracking-tight">
-          Login to your account
+          {t("title")}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Welcome back! Please enter your details below to sign in. Access your
-          dashboard and manage your settings.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("description")}</p>
       </div>
-
-      <Alert variant="default" className="bg-accent/5 border-accent/20">
-        <InfoIcon className="h-4 w-4 text-accent" />
-        <AlertTitle className="text-accent font-semibold">
-          Demo Credentials
-        </AlertTitle>
-        <AlertDescription className="text-muted-foreground">
-          Use{" "}
-          <code className="font-mono font-bold text-foreground">mor_2314</code>{" "}
-          / <code className="font-mono font-bold text-foreground">83r5^_</code>{" "}
-          to test the Fake Store API.
-        </AlertDescription>
-      </Alert>
 
       {error && (
         <Alert variant="destructive">
@@ -83,10 +80,10 @@ export default function LoginPage() {
         <form onSubmit={handleLogin}>
           <div className="grid gap-2">
             <div className="grid gap-1">
-              <Label htmlFor="username">Username</Label>
+              <Label htmlFor="username">{t("username")}</Label>
               <Input
                 id="username"
-                placeholder="mor_2314"
+                placeholder={t("usernamePlaceholder")}
                 type="text"
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -97,10 +94,10 @@ export default function LoginPage() {
               />
             </div>
             <div className="grid gap-1">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password">{t("password")}</Label>
               <Input
                 id="password"
-                placeholder="••••••••"
+                placeholder={t("passwordPlaceholder")}
                 type="password"
                 autoCapitalize="none"
                 autoCorrect="off"
@@ -113,7 +110,7 @@ export default function LoginPage() {
 
             <Button disabled={isLoading} className="mt-2 w-full text-white">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In
+              {t("signIn")}
             </Button>
           </div>
         </form>
@@ -123,7 +120,7 @@ export default function LoginPage() {
           </div>
           <div className="relative flex justify-center text-xs uppercase">
             <span className="bg-background px-2 text-muted-foreground">
-              Or continue with
+              {t("orContinueWith")}
             </span>
           </div>
         </div>
@@ -131,9 +128,9 @@ export default function LoginPage() {
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
         <Link
-          href="/register"
+          href={`/${currentLocale}/register`}
           className="hover:text-brand underline underline-offset-4">
-          Don&apos;t have an account? Sign Up
+          {t("noAccount")}
         </Link>
       </p>
     </AuthLayout>

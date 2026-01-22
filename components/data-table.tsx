@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table"
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
+import { useTranslations } from "next-intl"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -71,6 +72,7 @@ export function DataTable<TData, TValue>({
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const { isScrolled } = useLayoutStore()
+  const t = useTranslations("dataTable")
 
   // Parse pagination params
   const page = searchParams?.get("page") ? Number(searchParams.get("page")) : 1
@@ -144,7 +146,7 @@ export function DataTable<TData, TValue>({
           {/* Filters - Left */}
           <div className="flex items-center gap-2">
             <Input
-              placeholder={`Filter ${filterColumn}...`}
+              placeholder={`${t("filter")} ${filterColumn}...`}
               value={
                 (table.getColumn(filterColumn)?.getFilterValue() as string) ??
                 ""
@@ -159,7 +161,7 @@ export function DataTable<TData, TValue>({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="h-9">
-                  {table.getState().pagination.pageSize} rows{" "}
+                  {table.getState().pagination.pageSize} {t("rows")}{" "}
                   <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -169,7 +171,7 @@ export function DataTable<TData, TValue>({
                     key={pageSize}
                     checked={table.getState().pagination.pageSize === pageSize}
                     onCheckedChange={() => table.setPageSize(pageSize)}>
-                    {pageSize} rows
+                    {pageSize} {t("rows")}
                   </DropdownMenuCheckboxItem>
                 ))}
               </DropdownMenuContent>
@@ -177,7 +179,7 @@ export function DataTable<TData, TValue>({
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" className="h-9">
-                  Columns <ChevronDown className="ml-2 h-4 w-4" />
+                  {t("columns")} <ChevronDown className="ml-2 h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">

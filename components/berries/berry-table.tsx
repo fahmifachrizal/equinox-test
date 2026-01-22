@@ -1,8 +1,9 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
-import { columns } from "@/components/berries/berry-columns"
+import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
+import { createColumns } from "@/components/berries/berry-columns"
 import { DataTable } from "@/components/data-table"
 import { useLayoutStore } from "@/hooks/use-layout-store"
 import { cn } from "@/lib/utils"
@@ -25,8 +26,21 @@ export function BerryTable({
   isLoading,
 }: BerryTableProps) {
   const router = useRouter()
+  const pathname = usePathname()
   const { isScrolled } = useLayoutStore()
-  // No Add button for now unless requested, or just dummy
+  const t = useTranslations("berries")
+
+  const columns = React.useMemo(() => createColumns(t), [t])
+
+  // Get current locale
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
 
   return (
     <div className="w-full">
@@ -44,9 +58,11 @@ export function BerryTable({
               )}>
               {title}
             </h1>
-            <Button onClick={() => router.push("/berries/add")} size="sm">
+            <Button
+              onClick={() => router.push(`/${currentLocale}/berries/add`)}
+              size="sm">
               <Plus className="w-4 h-4 mr-2" />
-              Add Berry
+              {t("addBerry")}
             </Button>
           </div>
         </div>
@@ -58,7 +74,9 @@ export function BerryTable({
         filterColumn="name"
         manualPagination={manualPagination}
         isLoading={isLoading}
-        onRowClick={(row) => router.push(`/berries/${row.original.id}`)}
+        onRowClick={(row) =>
+          router.push(`/${currentLocale}/berries/${row.original.id}`)
+        }
       />
     </div>
   )

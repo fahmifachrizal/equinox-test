@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useParams, useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useBerriesStore } from "@/hooks/use-berries-store"
 import { MainLayout } from "@/components/layout/main-layout"
 import { Button } from "@/components/ui/button"
@@ -38,8 +39,21 @@ const BerryDetailImage = ({ name }: { name: string }) => {
 export default function BerryDetailPage() {
   const params = useParams()
   const router = useRouter()
+  const pathname = usePathname()
+  const t = useTranslations("berries")
+  const tc = useTranslations("common")
   const { getBerryById } = useBerriesStore()
   const id = params.id as string
+
+  // Get current locale for navigation
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
 
   const [berry, setBerry] = React.useState<any>(null)
   const [loading, setLoading] = React.useState(true)
@@ -57,8 +71,8 @@ export default function BerryDetailPage() {
         const res = await fetch(`/api/berries/${id}`)
         if (!res.ok) {
           if (res.status === 404) {
-            toast.error("Berry not found")
-            router.push("/berries")
+            toast.error(t("berryNotFound"))
+            router.push(`/${currentLocale}/berries`)
             return
           }
           throw new Error("Failed to fetch")
@@ -66,14 +80,14 @@ export default function BerryDetailPage() {
         const data = await res.json()
         setBerry(data)
       } catch (error) {
-        toast.error("Error loading berry")
+        toast.error(t("errorLoadingBerry"))
       } finally {
         setLoading(false)
       }
     }
 
     fetchBerry()
-  }, [id, getBerryById, router])
+  }, [id, getBerryById, router, currentLocale, t])
 
   if (loading) {
     return (
@@ -97,11 +111,12 @@ export default function BerryDetailPage() {
               <ArrowLeft className="h-4 w-4" />
             </Button>
             <h1 className="text-3xl font-bold capitalize">
-              {berry.name} Berry
+              {berry.name} {t("berry")}
             </h1>
           </div>
-          <Button onClick={() => router.push(`/berries/edit/${id}`)}>
-            <Edit className="mr-2 h-4 w-4" /> Edit
+          <Button
+            onClick={() => router.push(`/${currentLocale}/berries/edit/${id}`)}>
+            <Edit className="mr-2 h-4 w-4" /> {tc("edit")}
           </Button>
         </div>
 
@@ -113,50 +128,52 @@ export default function BerryDetailPage() {
                 <p className="font-semibold text-lg capitalize">
                   {berry.firmness.replace("-", " ")}
                 </p>
-                <p className="text-muted-foreground">Firmness</p>
+                <p className="text-muted-foreground">{t("firmness")}</p>
               </div>
             </CardContent>
           </Card>
 
           <Card className="md:col-span-2">
             <CardHeader>
-              <CardTitle>Statistics</CardTitle>
+              <CardTitle>{t("statistics")}</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Growth Time
+                    {t("growthTime")}
                   </p>
-                  <p className="text-2xl font-bold">{berry.growth_time} hrs</p>
+                  <p className="text-2xl font-bold">
+                    {berry.growth_time} {t("hrs")}
+                  </p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Max Harvest
+                    {t("maxHarvest")}
                   </p>
                   <p className="text-2xl font-bold">{berry.max_harvest}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Size
+                    {t("size")}
                   </p>
                   <p className="text-2xl font-bold">{berry.size}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Smoothness
+                    {t("smoothness")}
                   </p>
                   <p className="text-2xl font-bold">{berry.smoothness}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Soil Dryness
+                    {t("soilDryness")}
                   </p>
                   <p className="text-2xl font-bold">{berry.soil_dryness}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-muted-foreground">
-                    Natural Gift
+                    {t("naturalGift")}
                   </p>
                   <p className="text-lg font-bold capitalize">
                     {berry.natural_gift_type} ({berry.natural_gift_power})
@@ -166,7 +183,7 @@ export default function BerryDetailPage() {
 
               {berry.flavors && berry.flavors.length > 0 && (
                 <div className="mt-8">
-                  <h3 className="text-lg font-semibold mb-3">Flavors</h3>
+                  <h3 className="text-lg font-semibold mb-3">{t("flavors")}</h3>
                   <div className="grid grid-cols-2 gap-4">
                     {berry.flavors.map((f: any) => (
                       <div

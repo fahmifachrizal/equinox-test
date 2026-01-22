@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { Home, Inbox, ShoppingCart } from "lucide-react"
 
@@ -16,13 +17,6 @@ import {
 } from "@/components/ui/sidebar"
 import { cn } from "@/lib/utils"
 
-// Default labels (English)
-const defaultLabels = {
-  home: "Home",
-  products: "Q1: Products (fakestoreapi.com)",
-  berries: "Q2: Berries (pokeapi.co)",
-}
-
 export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
 
@@ -33,16 +27,13 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
     if (potentialLocale === "en" || potentialLocale === "id") {
       return potentialLocale
     }
-    return null // No locale prefix (e.g., home page)
+    return "en" // Default to English if no locale detected
   }, [pathname])
 
   // Build locale-aware URLs
   const getLocalizedUrl = (baseUrl: string) => {
     if (baseUrl === "/") return "/" // Home always stays at root
-    if (currentLocale) {
-      return `/${currentLocale}${baseUrl}`
-    }
-    return `/en${baseUrl}` // Default to English for non-locale pages
+    return `/${currentLocale}${baseUrl}` // Always use current or default locale
   }
 
   // Check if path is active (accounting for locale prefix)
@@ -54,19 +45,40 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
     return pathname.includes(baseUrl)
   }
 
+  // Get translated labels based on locale
+  const getLabels = () => {
+    try {
+      const messages = require(`@/messages/${currentLocale}.json`)
+      return {
+        home: messages.sidebar.home,
+        products: messages.sidebar.products,
+        berries: messages.sidebar.berries,
+      }
+    } catch {
+      // Fallback to English
+      return {
+        home: "Home",
+        products: "Q1: Products (fakestoreapi.com)",
+        berries: "Q2: Berries (pokeapi.co)",
+      }
+    }
+  }
+
+  const labels = getLabels()
+
   const items = [
     {
-      title: defaultLabels.home,
+      title: labels.home,
       url: "/",
       icon: Home,
     },
     {
-      title: defaultLabels.products,
+      title: labels.products,
       url: "/products",
       icon: ShoppingCart,
     },
     {
-      title: defaultLabels.berries,
+      title: labels.berries,
       url: "/berries",
       icon: Inbox,
     },
@@ -91,13 +103,13 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                         "relative transition-colors",
                         isActive && "text-accent bg-accent/10",
                       )}>
-                      <a href={href}>
+                      <Link href={href}>
                         {isActive && (
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-accent rounded-full" />
                         )}
                         <Icon className={cn(isActive && "text-accent")} />
                         <span>{item.title}</span>
-                      </a>
+                      </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 )

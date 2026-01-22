@@ -1,25 +1,38 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
+import * as React from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Alert, AlertDescription } from "@/components/ui/alert"
 import { OAuthButtons } from "@/components/oauth-buttons"
 
 import { AuthLayout } from "@/components/auth-layout"
 
 export default function Register() {
+  const t = useTranslations("auth.register")
+  const pathname = usePathname()
+
+  // Get current locale for navigation
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
+
   return (
     <AuthLayout>
       <div className="flex flex-col space-y-2 text-left">
         <h1 className="border-l-4 border-accent pl-2 text-4xl font-semibold tracking-tight">
-          Create an account
+          {t("title")}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Get started by creating a new account. It only takes a minute to set up your profile and start exploring all the features we have to offer.
-        </p>
+        <p className="text-sm text-muted-foreground">{t("description")}</p>
       </div>
       <div className="grid gap-6">
         <div className="grid gap-4">
@@ -34,21 +47,25 @@ export default function Register() {
             </div>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="emailMock">Email</Label>
+            <Label htmlFor="emailMock">{t("email")}</Label>
             <Input
               id="emailMock"
               type="email"
-              placeholder="m@example.com"
+              placeholder={t("emailPlaceholder")}
               required
             />
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="passwordMock">Password</Label>
-            <Input id="passwordMock" type="password" />
+            <Label htmlFor="passwordMock">{t("password")}</Label>
+            <Input
+              id="passwordMock"
+              type="password"
+              placeholder={t("passwordPlaceholder")}
+            />
           </div>
 
           <Button type="submit" className="w-full mt-2 text-white">
-            Create an account
+            {t("signUp")}
           </Button>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
@@ -56,7 +73,7 @@ export default function Register() {
             </div>
             <div className="relative flex justify-center text-xs uppercase">
               <span className="bg-background px-2 text-muted-foreground">
-                Or continue with
+                {t("orContinueWith")}
               </span>
             </div>
           </div>
@@ -65,10 +82,9 @@ export default function Register() {
       </div>
       <p className="px-8 text-center text-sm text-muted-foreground">
         <Link
-          href="/login"
-          className="hover:text-brand underline underline-offset-4"
-        >
-          Already have an account? Sign In
+          href={`/${currentLocale}/login`}
+          className="hover:text-brand underline underline-offset-4">
+          {t("haveAccount")}
         </Link>
       </p>
     </AuthLayout>

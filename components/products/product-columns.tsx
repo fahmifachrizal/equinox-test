@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown, ExternalLink, MoreHorizontal } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -46,13 +46,36 @@ export type Product = {
 
 const ActionCell = ({ row }: { row: any }) => {
   const router = useRouter()
+  const pathname = usePathname()
   const product = row.original
   const { deleteProduct } = useProductsStore()
   const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
 
+  // Get current locale
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
+
+  // Get translations
+  const getTranslations = () => {
+    try {
+      const messages = require(`@/messages/${currentLocale}.json`)
+      return messages.products
+    } catch {
+      return null
+    }
+  }
+
+  const t = getTranslations()
+
   const handleDelete = () => {
     deleteProduct(product.id)
-    toast.success("Product deleted successfully")
+    toast.success(t?.productDeletedSuccess || "Product deleted successfully")
     setShowDeleteDialog(false)
   }
 
@@ -66,22 +89,26 @@ const ActionCell = ({ row }: { row: any }) => {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuLabel>{t?.actions || "Actions"}</DropdownMenuLabel>
           <DropdownMenuItem
             onClick={() => {
               navigator.clipboard.writeText(product.id)
-              toast.success("Product ID copied to clipboard")
+              toast.success(t?.idCopied || "Product ID copied to clipboard")
             }}>
-            Copy product ID
+            {t?.copyId || "Copy product ID"}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onClick={() => router.push(`/product/${product.id}`)}>
-            View product
+            onClick={() =>
+              router.push(`/${currentLocale}/product/${product.id}`)
+            }>
+            {t?.viewProduct || "View product"}
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={() => router.push(`/product/edit/${product.id}`)}>
-            Edit details
+            onClick={() =>
+              router.push(`/${currentLocale}/product/edit/${product.id}`)
+            }>
+            {t?.editDetails || "Edit details"}
           </DropdownMenuItem>
           <DropdownMenuItem
             className="text-destructive focus:bg-red-500 focus:text-white group"
@@ -89,7 +116,7 @@ const ActionCell = ({ row }: { row: any }) => {
               e.preventDefault()
               setShowDeleteDialog(true)
             }}>
-            Delete product
+            {t?.deleteProduct || "Delete product"}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -97,18 +124,20 @@ const ActionCell = ({ row }: { row: any }) => {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>
+              {t?.deleteConfirmTitle || "Are you absolutely sure?"}
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the
-              product "{product.title}" and remove it from our servers.
+              {t?.deleteConfirmDesc ||
+                "This action cannot be undone. This will permanently delete the product and remove it from our servers."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t?.cancel || "Cancel"}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Delete
+              {t?.delete || "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -117,7 +146,7 @@ const ActionCell = ({ row }: { row: any }) => {
   )
 }
 
-export const columns: ColumnDef<Product>[] = [
+export const createColumns = (t: any): ColumnDef<Product>[] => [
   {
     accessorKey: "id",
     size: 100,
@@ -145,7 +174,7 @@ export const columns: ColumnDef<Product>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full hover:bg-accent/10">
-          Title
+          {t?.columns?.title || "Title"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -179,7 +208,7 @@ export const columns: ColumnDef<Product>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full hover:bg-accent/10">
-          Category
+          {t?.columns?.category || "Category"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -202,7 +231,7 @@ export const columns: ColumnDef<Product>[] = [
             variant="ghost"
             onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
             className="h-8 w-full hover:bg-accent/10">
-            Price
+            {t?.columns?.price || "Price"}
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         </div>
@@ -229,7 +258,7 @@ export const columns: ColumnDef<Product>[] = [
     size: 400,
     header: () => (
       <div className="flex w-full h-8 justify-center items-center">
-        Description
+        {t?.columns?.description || "Description"}
       </div>
     ),
     cell: ({ row, column }) => {
@@ -256,7 +285,9 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "image",
     size: 100,
     header: () => (
-      <div className="flex w-full h-8 justify-center items-center">Image</div>
+      <div className="flex w-full h-8 justify-center items-center">
+        {t?.columns?.image || "Image"}
+      </div>
     ),
     cell: ({ row, column }) => {
       const imageUrl = row.getValue("image") as string
@@ -291,6 +322,14 @@ export const columns: ColumnDef<Product>[] = [
   {
     id: "actions",
     size: 50,
+    header: () => (
+      <div className="flex w-full h-8 justify-center items-center">
+        {t?.columns?.actions || "Actions"}
+      </div>
+    ),
     cell: ({ row }) => <ActionCell row={row} />,
   },
 ]
+
+// Export default columns for backwards compatibility
+export const columns = createColumns({})

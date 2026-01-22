@@ -213,12 +213,12 @@ export default function LandingPage() {
 
           <div className="flex flex-col sm:flex-row gap-4 pt-4">
             <Link
-              href="/products"
+              href="/en/products"
               className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 h-10 px-6">
               Go to Products (Q1) <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
             <Link
-              href="/berries"
+              href="/en/berries"
               className="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring bg-primary text-primary-foreground shadow-sm hover:bg-primary/90 h-10 px-6">
               Go to Berries (Q2) <ArrowRight className="ml-2 h-4 w-4" />
             </Link>

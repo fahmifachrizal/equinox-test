@@ -1,5 +1,5 @@
 import createMiddleware from "next-intl/middleware"
-import { NextRequest } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 
 const locales = ["en", "id"] as const
 
@@ -15,6 +15,11 @@ export default function middleware(request: NextRequest) {
   // Skip middleware for the home page (keep it English only)
   if (pathname === "/") {
     return
+  }
+
+  // Redirect /en or /id (bare locale paths) to home
+  if (pathname === "/en" || pathname === "/id") {
+    return NextResponse.redirect(new URL("/", request.url))
   }
 
   return intlMiddleware(request)

@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { useProductsStore, ProductInput } from "@/hooks/use-products-store"
 import { productsApi } from "@/lib/api/products"
 import { toast } from "sonner"
@@ -23,8 +24,21 @@ export function ProductForm({
   mode,
 }: ProductFormProps) {
   const router = useRouter()
+  const pathname = usePathname()
+  const t = useTranslations("products")
+  const tc = useTranslations("common")
   const { addNewProduct, updateProduct } = useProductsStore()
   const [isSubmitting, setIsSubmitting] = React.useState(false)
+
+  // Get current locale for navigation
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
 
   const [form, setForm] = React.useState<ProductInput>(
     initialData || {
@@ -40,7 +54,7 @@ export function ProductForm({
     e.preventDefault()
 
     if (!form.title || !form.price) {
-      toast.warning("Title and Price are required")
+      toast.warning(t("titleAndPriceRequired"))
       return
     }
 
@@ -64,13 +78,13 @@ export function ProductForm({
 
       toast.success(
         mode === "create"
-          ? "Product added successfully!"
-          : "Product updated successfully!",
+          ? t("productAddedSuccess")
+          : t("productUpdatedSuccess"),
       )
-      router.push("/")
+      router.push(`/${currentLocale}/products`)
     } catch (error) {
       console.error(`Failed to ${mode} product:`, error)
-      toast.error(`Failed to ${mode} product. Please try again.`)
+      toast.error(mode === "create" ? t("failedToCreate") : t("failedToUpdate"))
     } finally {
       setIsSubmitting(false)
     }
@@ -104,25 +118,25 @@ export function ProductForm({
                 "flex flex-col items-center justify-center text-muted-foreground transition-opacity",
                 form.image && "hidden",
               )}>
-              <p className="font-medium">No Image Preview</p>
+              <p className="font-medium">{tc("noImagePreview")}</p>
               <p className="text-xs text-muted-foreground/70">
-                Enter URL below
+                {tc("enterUrlBelow")}
               </p>
             </div>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="image">Image URL</Label>
+            <Label htmlFor="image">{t("form.imageUrl")}</Label>
             <Input
               id="image"
               type="url"
               value={form.image}
               onChange={(e) => handleChange("image", e.target.value)}
-              placeholder="https://example.com/image.jpg"
+              placeholder={t("form.imageUrlPlaceholder")}
               className="font-mono text-xs"
             />
             <p className="text-xs text-muted-foreground">
-              Paste a direct image URL to see the preview above.
+              {tc("pasteImageUrl")}
             </p>
           </div>
         </div>
@@ -131,17 +145,17 @@ export function ProductForm({
         <div className="flex-1 flex flex-col gap-8">
           <div className="space-y-6">
             <h1 className="border-l-4 border-accent pl-3 text-3xl font-bold">
-              {mode === "create" ? "Add New Product" : "Edit Product"}
+              {mode === "create" ? t("addNewProduct") : t("editProduct")}
             </h1>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="title">Product Title *</Label>
+                <Label htmlFor="title">{t("form.productTitle")} *</Label>
                 <Input
                   id="title"
                   value={form.title}
                   onChange={(e) => handleChange("title", e.target.value)}
-                  placeholder="e.g. Premium Cotton T-Shirt"
+                  placeholder={t("form.productTitlePlaceholder")}
                   className="text-lg font-medium"
                   required
                 />
@@ -149,7 +163,7 @@ export function ProductForm({
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="price">Price ($) *</Label>
+                  <Label htmlFor="price">{t("form.price")} *</Label>
                   <Input
                     id="price"
                     type="number"
@@ -159,29 +173,29 @@ export function ProductForm({
                     onChange={(e) =>
                       handleChange("price", parseFloat(e.target.value) || 0)
                     }
-                    placeholder="0.00"
+                    placeholder={t("form.pricePlaceholder")}
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
+                  <Label htmlFor="category">{t("form.category")}</Label>
                   <Input
                     id="category"
                     value={form.category}
                     onChange={(e) => handleChange("category", e.target.value)}
-                    placeholder="e.g. Electronics"
+                    placeholder={t("form.categoryPlaceholder")}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t("form.description")}</Label>
                 <Textarea
                   id="description"
                   value={form.description}
                   onChange={(e) => handleChange("description", e.target.value)}
-                  placeholder="Describe your product..."
+                  placeholder={t("form.descriptionPlaceholder")}
                   rows={8}
                   className="resize-none"
                 />
@@ -195,17 +209,17 @@ export function ProductForm({
                 size="lg"
                 className="px-8">
                 {isSubmitting
-                  ? "Saving..."
+                  ? tc("saving")
                   : mode === "create"
-                    ? "Add Product"
-                    : "Save Changes"}
+                    ? t("addProduct")
+                    : tc("saveChanges")}
               </Button>
               <Button
                 type="button"
                 variant="outline"
                 size="lg"
                 onClick={() => router.back()}>
-                Cancel
+                {tc("cancel")}
               </Button>
             </div>
           </div>

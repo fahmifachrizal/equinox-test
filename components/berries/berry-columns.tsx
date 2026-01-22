@@ -14,7 +14,7 @@ import {
 import { Berry } from "@/types/berry"
 import { useBerriesStore } from "@/hooks/use-berries-store"
 import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 const BerryImage = ({ name }: { name: string }) => {
   const [error, setError] = React.useState(false)
@@ -43,10 +43,33 @@ const ActionCell = ({ row }: { row: any }) => {
   const berry = row.original
   const { deleteBerry } = useBerriesStore()
   const router = useRouter()
+  const pathname = usePathname()
+
+  // Get current locale
+  const currentLocale = React.useMemo(() => {
+    const segments = pathname?.split("/") || []
+    const potentialLocale = segments[1]
+    if (potentialLocale === "en" || potentialLocale === "id") {
+      return potentialLocale
+    }
+    return "en"
+  }, [pathname])
+
+  // Get translations
+  const getTranslations = () => {
+    try {
+      const messages = require(`@/messages/${currentLocale}.json`)
+      return messages.berries
+    } catch {
+      return null
+    }
+  }
+
+  const t = getTranslations()
 
   const handleDelete = () => {
     deleteBerry(berry.id)
-    toast.success(`Berry "${berry.name}" deleted`)
+    toast.success(t?.berryDeletedSuccess || `Berry "${berry.name}" deleted`)
   }
 
   return (
@@ -58,25 +81,28 @@ const ActionCell = ({ row }: { row: any }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-        <DropdownMenuItem onClick={() => router.push(`/berries/${berry.id}`)}>
-          View details
+        <DropdownMenuLabel>{t?.actions || "Actions"}</DropdownMenuLabel>
+        <DropdownMenuItem
+          onClick={() => router.push(`/${currentLocale}/berries/${berry.id}`)}>
+          {t?.viewDetails || "View details"}
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-destructive focus:text-destructive"
           onClick={handleDelete}>
-          Delete berry
+          {t?.deleteBerry || "Delete berry"}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   )
 }
 
-export const columns: ColumnDef<Berry>[] = [
+export const createColumns = (t: any): ColumnDef<Berry>[] => [
   {
     id: "image",
     header: ({ column }) => (
-      <div className="h-8 w-full flex items-center justify-center">Image</div>
+      <div className="h-8 w-full flex items-center justify-center">
+        {t?.columns?.image || "Image"}
+      </div>
     ),
     cell: ({ row }) => {
       const name = row.getValue("name") as string
@@ -91,7 +117,7 @@ export const columns: ColumnDef<Berry>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full justify-center hover:bg-accent/10">
-          Name
+          {t?.columns?.name || "Name"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -110,13 +136,15 @@ export const columns: ColumnDef<Berry>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full justify-center hover:bg-accent/10">
-          Growth Time
+          {t?.columns?.growth || "Growth Time"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
     },
     cell: ({ row }) => (
-      <div className="text-center">{row.getValue("growth_time")} hrs</div>
+      <div className="text-center">
+        {row.getValue("growth_time")} {t?.hrs || "hrs"}
+      </div>
     ),
   },
   {
@@ -127,7 +155,7 @@ export const columns: ColumnDef<Berry>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full justify-center hover:bg-accent/10">
-          Max Harvest
+          {t?.maxHarvest || "Max Harvest"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -144,7 +172,7 @@ export const columns: ColumnDef<Berry>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full justify-center hover:bg-accent/10">
-          Firmness
+          {t?.firmness || "Firmness"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -163,7 +191,7 @@ export const columns: ColumnDef<Berry>[] = [
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
           className="h-8 w-full justify-center hover:bg-accent/10">
-          Size
+          {t?.size || "Size"}
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       )
@@ -174,6 +202,11 @@ export const columns: ColumnDef<Berry>[] = [
   },
   {
     id: "actions",
+    header: () => (
+      <div className="h-8 w-full flex items-center justify-center">
+        {t?.columns?.actions || "Actions"}
+      </div>
+    ),
     cell: ({ row }) => (
       <div className="flex justify-center">
         <ActionCell row={row} />
@@ -181,3 +214,6 @@ export const columns: ColumnDef<Berry>[] = [
     ),
   },
 ]
+
+// Export default columns for backwards compatibility
+export const columns = createColumns({})

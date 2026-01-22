@@ -8,8 +8,8 @@ import { Toaster } from "@/components/ui/sonner";
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "User Management - Equinox",
-  description: "Equinox user management system",
+  title: "Equinox - Technical Test",
+  description: "Equinox - Technical Test",
 };
 
 export default function RootLayout({
