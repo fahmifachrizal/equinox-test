@@ -11,16 +11,14 @@ export async function GET(request: Request) {
 
   try {
     // Fetch from Fake Store API with a timeout or signal if needed, but for now just basic check
-    const response = await fetch("https://fakestoreapi.com/products", {
-      next: { revalidate: 3600 }, // Cache for 1 hour
-    })
+    const response = await fetch("https://fakestoreapi.com/products")
 
     if (!response.ok) {
       console.error(
         `FakeStoreAPI error: ${response.status} ${response.statusText}`,
       )
       return NextResponse.json(
-        { error: `External API responded with status ${response.status}` },
+        { error: `External API responded with status ${response.status}`, message: response.statusText },
         { status: 502 }, // Bad Gateway
       )
     }
