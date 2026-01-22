@@ -3,11 +3,10 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
 const languages = [
@@ -45,41 +44,62 @@ export function LanguageSwitcher() {
 
   const currentLanguage = languages.find((l) => l.code === language)!
 
+  const [mounted, setMounted] = React.useState(false)
+  // Control popover open state manually
+  const [open, setOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <Button variant="outline" size="sm" className="gap-2">
+        <LanguageBadge code={currentLanguage.shortCode} active />
+        <span className="hidden sm:inline-block">
+          {currentLanguage.label}
+        </span>
+      </Button>
+    )
+  }
+
+
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className="gap-2 sm:w-32 justify-start px-3">
           <LanguageBadge code={currentLanguage.shortCode} active />
           <span className="hidden sm:inline-block">
             {currentLanguage.label}
           </span>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
+      </PopoverTrigger>
+      <PopoverContent
         align="end"
-        className="min-w-[160px] flex flex-col gap-2.5 p-2">
+        className="w-[140px] sm:w-32 flex flex-col gap-1 p-2">
         {languages.map((lang) => (
-          <DropdownMenuItem
+          <div
             key={lang.code}
-            onClick={() => setLanguage(lang.code)}
+            onClick={() => {
+              setLanguage(lang.code)
+              setOpen(false)
+            }}
             className={cn(
-              "gap-3 cursor-pointer focus:bg-accent/10 focus:text-foreground group h-10",
-              language === lang.code && "border border-accent",
+              "flex items-center gap-3 cursor-pointer rounded-sm px-2 py-2 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground",
+              language === lang.code && "bg-accent/10 border border-accent",
             )}>
             <LanguageBadge
               code={lang.shortCode}
               active={language === lang.code}
               className={cn(
-                !(language === lang.code) && [
-                  "group-hover:bg-accent group-hover:text-accent-foreground",
-                  "group-focus:bg-accent group-focus:text-accent-foreground",
-                ],
+                !(language === lang.code) && "group-hover:bg-accent group-hover:text-accent-foreground"
               )}
             />
             {lang.label}
-          </DropdownMenuItem>
+          </div>
         ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverContent>
+    </Popover>
   )
 }

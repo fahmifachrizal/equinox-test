@@ -1,6 +1,6 @@
 import { LanguageSwitcher } from "@/components/language-switcher"
 import { AuthPopover } from "@/components/auth-popover"
-import { EquinoxHeader } from "@/components/equinox-header"
+import { Titlebar } from "@/components/titlebar"
 
 interface SiteHeaderProps {
   isScrolled?: boolean
@@ -8,9 +8,9 @@ interface SiteHeaderProps {
 
 export function SiteHeader({ isScrolled }: SiteHeaderProps) {
   return (
-    <EquinoxHeader className="bg-transparent" isScrolled={isScrolled}>
+    <Titlebar isScrolled={isScrolled}>
       <LanguageSwitcher />
       <AuthPopover />
-    </EquinoxHeader>
+    </Titlebar>
   )
 }

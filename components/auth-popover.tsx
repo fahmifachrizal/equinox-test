@@ -3,7 +3,7 @@
 import * as React from "react"
 import { User, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 import { OAuthButtons } from "@/components/oauth-buttons"
 
@@ -22,6 +22,7 @@ export function AuthPopover() {
   const [password, setPassword] = React.useState("")
   const [isLoading, setIsLoading] = React.useState(false)
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -47,10 +48,32 @@ export function AuthPopover() {
     }
   }
 
+  // Determine if the current page is an authentication-related page
+  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register")
+
+  if (isAuthPage) {
+    return null
+  }
+
+  const [mounted, setMounted] = React.useState(false)
+
+  React.useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  if (!mounted) {
+    return (
+      <Button variant="default" size="sm" className="gap-2 text-white">
+        <User className="size-4" />
+        Login
+      </Button>
+    )
+  }
+
   return (
     <Popover open={isOpen} onOpenChange={setIsOpen}>
       <PopoverTrigger asChild>
-        <Button variant="default" size="sm" className="gap-2">
+        <Button variant="default" size="sm" className="gap-2 text-white">
           <User className="size-4" />
           Login
         </Button>
@@ -87,7 +110,7 @@ export function AuthPopover() {
             </div>
           </div>
           <div className="flex flex-col gap-2">
-            <Button type="submit" disabled={isLoading}>
+            <Button type="submit" disabled={isLoading} className="w-full text-white">
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Login
             </Button>

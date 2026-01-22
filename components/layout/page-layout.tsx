@@ -11,17 +11,17 @@ export function PageLayout({ children }: { children: React.ReactNode }) {
     <div className="flex flex-1 w-full max-w-screen-2xl">
       <AppSidebar
         className={cn(
-          "sticky self-start border-r bg-transparent hidden md:block transition-[top] duration-200 ease-in-out",
-          isScrolled ? "top-[64px]" : "top-[88px]",
+          "sticky self-start border-r bg-transparent hidden md:block transition-[top] duration-200 ease-in-out h-full",
+          isScrolled ? "top-14" : "top-22",
         )}
         style={{
-          maxHeight: `calc(100vh - ${isScrolled ? 64 : 88}px)`,
+          maxHeight: `calc(100vh - ${isScrolled ? 56 : 88}px)`,
         }}
       />
 
-      <SidebarInset className="flex flex-col flex-1 min-w-0">
-        <div className="flex flex-col flex-1 w-full p-10 mx-auto max-w-screen-2xl">
-          <main className="flex-1 flex flex-col gap-4 bg-transparent">
+      <SidebarInset className="flex flex-col min-w-0 flex-1 h-auto">
+        <div className="flex flex-col w-full pt-0 pb-6 px-10 mx-auto max-w-screen-2xl">
+          <main className="flex flex-col flex-1 gap-4 bg-transparent">
             {children}
           </main>
         </div>

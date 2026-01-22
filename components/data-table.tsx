@@ -38,14 +38,12 @@ import { cn } from "@/lib/utils"
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  title?: string
   pageCount?: number
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  title,
   pageCount,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([])
@@ -60,13 +58,13 @@ export function DataTable<TData, TValue>({
   const searchParams = useSearchParams()
   const { isScrolled } = useLayoutStore()
 
-  // Search params
+  // Parse pagination params
   const page = searchParams?.get("page") ? Number(searchParams.get("page")) : 1
   const per_page = searchParams?.get("limit")
     ? Number(searchParams.get("limit"))
     : 10
 
-  // Create pagination state for the table
+  // Memoize pagination state to prevent unnecessary table re-renders
   const pagination = React.useMemo(
     () => ({
       pageIndex: page - 1,
@@ -75,7 +73,7 @@ export function DataTable<TData, TValue>({
     [page, per_page],
   )
 
-  // Handle pagination changes
+  // Pagination handler
   const [isPending, startTransition] = React.useTransition()
 
   const onPaginationChange = (updater: any) => {
@@ -84,7 +82,7 @@ export function DataTable<TData, TValue>({
 
     const params = new URLSearchParams(searchParams?.toString())
 
-    // If page size changes, reset to first page
+    // Reset to page 1 on page size change
     if (newPagination.pageSize !== pagination.pageSize) {
       params.set("page", "1")
     } else {
@@ -123,24 +121,10 @@ export function DataTable<TData, TValue>({
     <div className="w-full">
       <div
         className={cn(
-          "sticky z-20 bg-background transition-[padding,top,border-color] duration-200 ease-in-out border-b py-4 will-change-[padding,top]",
-          isScrolled ? "top-[64px]" : "top-[88px] border-transparent",
+          "sticky z-20 bg-background transition-[padding,top,border-color] duration-200 ease-in-out py-4 pt-0 will-change-[padding,top]",
+          isScrolled ? "top-29" : "top-52 border-transparent",
         )}>
-        {/* Title Row */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-1 h-6 bg-accent rounded-full" />
-          {title && (
-            <h1
-              className={cn(
-                "font-bold transition-[font-size,line-height] duration-200 ease-in-out origin-left",
-                isScrolled ? "text-xl" : "text-3xl",
-              )}>
-              {title}
-            </h1>
-          )}
-        </div>
-
-        {/* Filters (left) and Pagination (right) Row */}
+        {/* Controls bar */}
         <div className="flex items-center justify-between gap-4">
           {/* Filters - Left */}
           <div className="flex items-center gap-2">
@@ -152,7 +136,7 @@ export function DataTable<TData, TValue>({
               onChange={(event) =>
                 table.getColumn("title")?.setFilterValue(event.target.value)
               }
-              className="max-w-sm h-9 focus-visible:ring-accent"
+              className="max-w-sm h-9 focus-visible:ring-primary/50"
             />
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -211,13 +195,13 @@ export function DataTable<TData, TValue>({
                   - Showing{" "}
                   {table.getFilteredRowModel().rows.length > 0
                     ? table.getState().pagination.pageIndex *
-                        table.getState().pagination.pageSize +
-                      1
+                    table.getState().pagination.pageSize +
+                    1
                     : 0}{" "}
                   to{" "}
                   {Math.min(
                     (table.getState().pagination.pageIndex + 1) *
-                      table.getState().pagination.pageSize,
+                    table.getState().pagination.pageSize,
                     table.getFilteredRowModel().rows.length,
                   )}{" "}
                   of {table.getFilteredRowModel().rows.length}
@@ -264,11 +248,11 @@ export function DataTable<TData, TValue>({
           "rounded-md border",
           isPending && "opacity-50 pointer-events-none",
         )}>
-        <Table className="table-fixed bg-background">
+        <Table className="table-fixed bg-background overflow-clip rounded-sm">
           <TableHeader
             className={cn(
-              "sticky z-20 bg-background transition-[top] duration-200 ease-in-out shadow-sm will-change-[top]",
-              isScrolled ? "top-[168px]" : "top-[224px]",
+              "sticky z-20 bg-muted rounded-t-md overflow-hidden transition-[top] duration-200 ease-in-out will-change-[top]",
+              isScrolled ? "top-[168px]" : "top-[216px]",
             )}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -276,6 +260,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
+                      className="first:rounded-tl-sm last:rounded-tr-sm"
                       style={{
                         width:
                           header.column.columnDef.size === 150
@@ -285,9 +270,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </TableHead>
                   )
                 })}

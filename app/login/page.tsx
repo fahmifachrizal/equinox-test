@@ -51,7 +51,7 @@ export default function LoginPage() {
   return (
     <AuthLayout>
       <div className="flex flex-col space-y-2 text-left">
-        <h1 className="text-4xl font-semibold tracking-tight">
+        <h1 className="border-l-4 border-accent pl-2 text-4xl font-semibold tracking-tight">
           Login to your account
         </h1>
         <p className="text-sm text-muted-foreground">

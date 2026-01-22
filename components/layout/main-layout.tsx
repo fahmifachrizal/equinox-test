@@ -51,7 +51,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   return (
     <SidebarProvider className="flex min-h-screen flex-col">
       {/* Sticky Header */}
-      <div className="sticky top-0 z-50 w-full bg-background border-b backdrop-blur-sm transition-[border-color] duration-200 ease-in-out will-change-[border-color]">
+      <div className="sticky top-0 z-50 w-full bg-muted/80 border-b backdrop-blur-md transition-[border-color,background-color] duration-200 ease-in-out will-change-[border-color,background-color]">
         <div className="mx-auto w-full max-w-screen-2xl">
           <SiteHeader isScrolled={localScrolled} />
         </div>
@@ -64,7 +64,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       {/* Footer */}
       <div
         ref={footerRef}
-        className="w-full border-t bg-background z-40 relative">
+        className="w-full border-t bg-muted z-40 relative transition-colors duration-200">
         <div className="mx-auto w-full max-w-screen-2xl">
           <SiteFooter />
         </div>
