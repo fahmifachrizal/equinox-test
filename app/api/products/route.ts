@@ -14,8 +14,11 @@ export async function GET(request: Request) {
     const response = await fetch("https://fakestoreapi.com/products")
     const apiProducts = await response.json()
 
-    // Map to our internal format
-    const allProducts = apiProducts.map((p: any, i: number) => ({
+    // NOTE: For this demo, we fetch all products and filter/paginate in memory.
+    // In a real production app with thousands of records, this would be handled
+    // by database queries (e.g., SQL OFFSET/LIMIT) to avoid performance bottlenecks.
+    // Since the dataset is small (~20 items), client-side manipulation is acceptable here.
+    const allProducts = apiProducts.map((p: any) => ({
       id: p.id.toString(),
       title: p.title,
       description: p.description,
@@ -24,7 +27,8 @@ export async function GET(request: Request) {
       category: p.category,
       rating: p.rating.rate,
       reviews: p.rating.count,
-      status: STATUSES[i % STATUSES.length],
+      // Randomize status for demo variety
+      status: STATUSES[Math.floor(Math.random() * STATUSES.length)],
     }))
 
     let filteredProducts = allProducts

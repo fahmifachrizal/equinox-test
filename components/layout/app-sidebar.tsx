@@ -15,6 +15,7 @@ import {
   Bell,
   HelpCircle,
   CreditCard,
+  Lock,
 } from "lucide-react"
 
 import {
@@ -30,61 +31,22 @@ import {
 import { cn } from "@/lib/utils"
 
 // Menu items.
+// Menu items.
 const items = [
   {
-    title: "Dashboard",
+    title: "Home",
     url: "/",
     icon: Home,
   },
   {
-    title: "Products",
+    title: "Q1: Products (fakestoreapi.com)",
     url: "/products",
     icon: ShoppingCart,
   },
   {
-    title: "Users",
-    url: "/users",
-    icon: Users,
-  },
-  {
-    title: "Orders",
-    url: "/orders",
-    icon: FileText,
-  },
-  {
-    title: "Analytics",
-    url: "/analytics",
-    icon: BarChart3,
-  },
-  {
-    title: "Calendar",
-    url: "/calendar",
-    icon: Calendar,
-  },
-  {
-    title: "Inbox",
-    url: "/inbox",
+    title: "Q2: Berries (pokeapi.co)",
+    url: "/berries",
     icon: Inbox,
-  },
-  {
-    title: "Notifications",
-    url: "/notifications",
-    icon: Bell,
-  },
-  {
-    title: "Billing",
-    url: "/billing",
-    icon: CreditCard,
-  },
-  {
-    title: "Settings",
-    url: "/settings",
-    icon: Settings,
-  },
-  {
-    title: "Help",
-    url: "/help",
-    icon: HelpCircle,
   },
 ]
 
@@ -102,6 +64,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                 const isActive =
                   pathname === item.url ||
                   (item.url !== "/" && pathname.startsWith(item.url))
+                const Icon = item.icon
                 return (
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
@@ -114,7 +77,7 @@ export function AppSidebar(props: React.ComponentProps<typeof Sidebar>) {
                         {isActive && (
                           <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-accent rounded-full" />
                         )}
-                        <item.icon className={cn(isActive && "text-accent")} />
+                        <Icon className={cn(isActive && "text-accent")} />
                         <span>{item.title}</span>
                       </a>
                     </SidebarMenuButton>

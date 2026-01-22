@@ -19,6 +19,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
+import { useProductsStore } from "@/hooks/use-products-store"
+import { toast } from "sonner"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export type Product = {
   id: string
@@ -35,6 +47,14 @@ export type Product = {
 const ActionCell = ({ row }: { row: any }) => {
   const router = useRouter()
   const product = row.original
+  const { deleteProduct } = useProductsStore()
+  const [showDeleteDialog, setShowDeleteDialog] = React.useState(false)
+
+  const handleDelete = () => {
+    deleteProduct(product.id)
+    toast.success("Product deleted successfully")
+    setShowDeleteDialog(false)
+  }
 
   return (
     <div onClick={(e) => e.stopPropagation()}>
@@ -48,7 +68,10 @@ const ActionCell = ({ row }: { row: any }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => navigator.clipboard.writeText(product.id)}>
+            onClick={() => {
+              navigator.clipboard.writeText(product.id)
+              toast.success("Product ID copied to clipboard")
+            }}>
             Copy product ID
           </DropdownMenuItem>
           <DropdownMenuSeparator />
@@ -61,16 +84,35 @@ const ActionCell = ({ row }: { row: any }) => {
             Edit details
           </DropdownMenuItem>
           <DropdownMenuItem
-            className="text-destructive"
-            onClick={() => {
-              if (confirm("Are you sure you want to delete this product?")) {
-                window.dispatchEvent(new CustomEvent("product:delete", { detail: product.id }))
-              }
+            className="text-destructive focus:bg-red-500 focus:text-white group"
+            onSelect={(e) => {
+              e.preventDefault()
+              setShowDeleteDialog(true)
             }}>
             Delete product
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the
+              product "{product.title}" and remove it from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
@@ -91,9 +133,7 @@ export const columns: ColumnDef<Product>[] = [
       )
     },
     cell: ({ row, column }) => (
-      <div className="truncate text-center">
-        {row.getValue("id")}
-      </div>
+      <div className="truncate text-center">{row.getValue("id")}</div>
     ),
   },
   {
@@ -216,9 +256,7 @@ export const columns: ColumnDef<Product>[] = [
     accessorKey: "image",
     size: 100,
     header: () => (
-      <div className="flex w-full h-8 justify-center items-center">
-        Image
-      </div>
+      <div className="flex w-full h-8 justify-center items-center">Image</div>
     ),
     cell: ({ row, column }) => {
       const imageUrl = row.getValue("image") as string
@@ -232,12 +270,12 @@ export const columns: ColumnDef<Product>[] = [
                 href={imageUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center p-2 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+                className="inline-flex items-center justify-center p-2 rounded-md text-muted-foreground hover:text-foreground transition-colors">
                 <ExternalLink className="w-4 h-4" />
               </a>
             </HoverCardTrigger>
             <HoverCardContent>
-              <div className="relative h-80 w-80 overflow-hidden rounded-md bg-white p-2 border">
+              <div className="relative h-80 w-80 overflow-hidden rounded-md p-2">
                 <img
                   src={imageUrl}
                   alt="Product"

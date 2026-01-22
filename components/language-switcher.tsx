@@ -56,19 +56,18 @@ export function LanguageSwitcher() {
     return (
       <Button variant="outline" size="sm" className="gap-2">
         <LanguageBadge code={currentLanguage.shortCode} active />
-        <span className="hidden sm:inline-block">
-          {currentLanguage.label}
-        </span>
+        <span className="hidden sm:inline-block">{currentLanguage.label}</span>
       </Button>
     )
   }
 
-
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2 sm:w-32 justify-start px-3">
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-2 sm:w-32 justify-start px-3">
           <LanguageBadge code={currentLanguage.shortCode} active />
           <span className="hidden sm:inline-block">
             {currentLanguage.label}
@@ -77,7 +76,7 @@ export function LanguageSwitcher() {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[140px] sm:w-32 flex flex-col gap-1 p-2">
+        className="w-[140px] sm:w-32 flex flex-col p-1">
         {languages.map((lang) => (
           <div
             key={lang.code}
@@ -86,17 +85,21 @@ export function LanguageSwitcher() {
               setOpen(false)
             }}
             className={cn(
-              "flex items-center gap-3 cursor-pointer rounded-sm px-2 py-2 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground",
-              language === lang.code && "bg-accent/10 border border-accent",
+              "flex items-center gap-2 cursor-pointer rounded-sm px-2 py-1.5 text-sm outline-hidden select-none hover:bg-accent hover:text-accent-foreground transition-colors",
+              language === lang.code && "bg-accent/10",
             )}>
-            <LanguageBadge
-              code={lang.shortCode}
-              active={language === lang.code}
-              className={cn(
-                !(language === lang.code) && "group-hover:bg-accent group-hover:text-accent-foreground"
-              )}
-            />
-            {lang.label}
+            <div className="flex w-6 shrink-0 justify-center">
+              <LanguageBadge
+                code={lang.shortCode}
+                active={language === lang.code}
+                className={cn(
+                  "scale-90",
+                  !(language === lang.code) &&
+                    "group-hover:bg-accent group-hover:text-accent-foreground",
+                )}
+              />
+            </div>
+            <span>{lang.label}</span>
           </div>
         ))}
       </PopoverContent>

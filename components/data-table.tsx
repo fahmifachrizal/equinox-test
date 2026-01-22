@@ -10,7 +10,9 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
+  Row,
 } from "@tanstack/react-table"
 import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
@@ -35,18 +37,30 @@ import {
 import { useLayoutStore } from "@/hooks/use-layout-store"
 import { cn } from "@/lib/utils"
 
+import { Skeleton } from "@/components/ui/skeleton"
+
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pageCount?: number
+  filterColumn?: string
+  manualPagination?: boolean
+  isLoading?: boolean
+  onRowClick?: (row: Row<TData>) => void
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   pageCount,
+  filterColumn = "title",
+  manualPagination = false,
+  isLoading = false,
+  onRowClick,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = React.useState<SortingState>([])
+  const [sorting, setSorting] = React.useState<SortingState>([
+    { id: filterColumn, desc: false },
+  ])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
   )
@@ -99,7 +113,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    pageCount: pageCount ?? -1,
+    pageCount: manualPagination ? (pageCount ?? -1) : undefined,
     state: {
       sorting,
       columnFilters,
@@ -107,13 +121,14 @@ export function DataTable<TData, TValue>({
 
       pagination,
     },
-    manualPagination: true,
+    manualPagination: manualPagination,
     onPaginationChange: onPaginationChange,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
   })
 
@@ -121,20 +136,23 @@ export function DataTable<TData, TValue>({
     <div className="w-full">
       <div
         className={cn(
-          "sticky z-20 bg-background transition-[padding,top,border-color] duration-200 ease-in-out py-4 pt-0 will-change-[padding,top]",
-          isScrolled ? "top-29" : "top-52 border-transparent",
+          "sticky z-20 bg-background transition-[padding,top,border-color] duration-200 ease-in-out py-4 will-change-[padding,top]",
+          isScrolled ? "top-28" : "top-48 border-transparent",
         )}>
         {/* Controls bar */}
         <div className="flex items-center justify-between gap-4">
           {/* Filters - Left */}
           <div className="flex items-center gap-2">
             <Input
-              placeholder="Filter titles..."
+              placeholder={`Filter ${filterColumn}...`}
               value={
-                (table.getColumn("title")?.getFilterValue() as string) ?? ""
+                (table.getColumn(filterColumn)?.getFilterValue() as string) ??
+                ""
               }
               onChange={(event) =>
-                table.getColumn("title")?.setFilterValue(event.target.value)
+                table
+                  .getColumn(filterColumn)
+                  ?.setFilterValue(event.target.value)
               }
               className="max-w-sm h-9 focus-visible:ring-primary/50"
             />
@@ -190,18 +208,18 @@ export function DataTable<TData, TValue>({
                 Page {table.getState().pagination.pageIndex + 1} of{" "}
                 {table.getPageCount()}
               </span>
-              {(table.getColumn("title")?.getFilterValue() as string) && (
+              {(table.getColumn(filterColumn)?.getFilterValue() as string) && (
                 <span className="text-muted-foreground/60">
                   - Showing{" "}
                   {table.getFilteredRowModel().rows.length > 0
                     ? table.getState().pagination.pageIndex *
-                    table.getState().pagination.pageSize +
-                    1
+                        table.getState().pagination.pageSize +
+                      1
                     : 0}{" "}
                   to{" "}
                   {Math.min(
                     (table.getState().pagination.pageIndex + 1) *
-                    table.getState().pagination.pageSize,
+                      table.getState().pagination.pageSize,
                     table.getFilteredRowModel().rows.length,
                   )}{" "}
                   of {table.getFilteredRowModel().rows.length}
@@ -252,7 +270,7 @@ export function DataTable<TData, TValue>({
           <TableHeader
             className={cn(
               "sticky z-20 bg-muted rounded-t-md overflow-hidden transition-[top] duration-200 ease-in-out will-change-[top]",
-              isScrolled ? "top-[168px]" : "top-[216px]",
+              isScrolled ? "top-[160px]" : "top-[195px]",
             )}>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
@@ -270,9 +288,9 @@ export function DataTable<TData, TValue>({
                       {header.isPlaceholder
                         ? null
                         : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   )
                 })}
@@ -280,15 +298,26 @@ export function DataTable<TData, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              Array.from({ length: 10 }).map((_, i) => (
+                <TableRow key={i} className="hover:bg-transparent">
+                  {columns.map((column, index) => (
+                    <TableCell key={index}>
+                      <Skeleton className="h-6 w-full" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="cursor-pointer hover:bg-accent/10 transition-colors"
-                  onClick={() =>
-                    router.push(`/product/${(row.original as any).id}`)
-                  }>
+                  className={cn(
+                    "cursor-pointer hover:bg-accent/10 transition-colors",
+                    onRowClick && "cursor-pointer",
+                  )}
+                  onClick={() => onRowClick && onRowClick(row)}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(

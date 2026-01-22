@@ -41,6 +41,12 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
     if (checkScripts()) return
 
     // Poll every 100ms
+    // NOTE: This polling strategy is required because Vanta.js is a legacy script
+    // that injects globals (window.VANTA, window.p5). We need to wait for these
+    // to be available on the window object before initializing the effect.
+    // A more modern approach would be to use a React-wrapper library or
+    // the onLoad callback of the Script component, but this ensures compatibility
+    // with the specific version of Vanta we are using.
     const interval = setInterval(() => {
       if (checkScripts()) {
         clearInterval(interval)
@@ -58,14 +64,14 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
     if (!resolvedTheme) return
 
     const isDark = theme === "dark" || resolvedTheme === "dark"
-    
+
     // Brand primary color #1EA8D2
-    const color = 0x1EA8D2
+    const color = 0x1ea8d2
     const backgroundColor = isDark ? 0xfafafa : 0x0a0a0a
 
     try {
-      if (typeof window.p5 !== 'undefined') {
-         // console.log("Initializing Vanta with p5.js")
+      if (typeof window.p5 !== "undefined") {
+        // console.log("Initializing Vanta with p5.js")
       }
 
       // Destroy previous effect if it exists
@@ -87,13 +93,14 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
         color: color,
         backgroundColor: backgroundColor,
       })
-      console.log(`Vanta initialized: ${isDark ? 'Dark' : 'Light'} (Bg: ${backgroundColor.toString(16)})`)
-      
+      console.log(
+        `Vanta initialized: ${isDark ? "Dark" : "Light"} (Bg: ${backgroundColor.toString(16)})`,
+      )
+
       // Fade in container after initialization
       setTimeout(() => {
         setOpacity(1)
       }, 100)
-      
     } catch (error) {
       console.error("Vanta initialization failed:", error)
     }
@@ -113,8 +120,8 @@ export function VantaBackground({ className }: VantaBackgroundProps) {
   const bgColor = isDark ? "#fafafa" : "#0a0a0a"
 
   return (
-    <div 
-      ref={vantaRef} 
+    <div
+      ref={vantaRef}
       className={className}
       style={{
         backgroundColor: bgColor, // Matches Vanta bg color
